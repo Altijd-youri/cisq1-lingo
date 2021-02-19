@@ -17,6 +17,13 @@ public class Feedback {
     private List<Mark> compare() {
         List<Mark> marks = new ArrayList<>();
         String guessCharaters = guess;
+
+        if (answer.length() != guess.length()) {
+            for (int i = 0; i < answer.length(); i++) {
+                marks.add(Mark.INVALID);
+            }
+            return marks;
+        }
         for (int answerPosition = 0; answerPosition < answer.length(); answerPosition++) {
             Character answerletter = answer.charAt(answerPosition);
             for (int guessPosition = 0; guessPosition < guess.length(); guessPosition++) {
