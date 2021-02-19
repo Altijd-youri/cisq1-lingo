@@ -29,14 +29,15 @@ Feature: Training for Lingo
 
   Scenario Outline: Guessing a word
     Given I am playing a round
-      And I should see the first letter
+      And I should see the "<hint>"
       And The word is "<word>"
     When I guess "<guess>"
     Then The feedback should be "<feedback>"
 
     Examples:
-      | word    | guess   | feedback                                            |
-      | tosti   | combi   | INCORRECT,  CORRECT,  INCORRECT, INCORRECT, CORRECT |
-      | tosti   | conti   | INCORRECT, CORRECT, INCORRECT, CORRECT, CORRECT     |
-      | tosti   | tosti   | CORRECT, CORRECT, CORRECT, CORRECT, CORRECT         |
-
+      | word    | guess   | hint   | feedback                                               |
+      | BAARD   | BERGEN  | B....  | INVALID,  INVALID,  INVALID, INVALID, INVALID, INVALID |
+      | BAARD   | BONJE   | B....  | CORRECT, INCORRECT, INCORRECT, INCORRECT, INCORRECT    |
+      | BAARD   | BARST   | B....  | CORRECT, CORRECT, PRESENT, INCORRECT, INCORRECT        |
+      | BAARD   | DRAAD   | BA...  | INCORRECT, PRESENT, CORRECT, PRESENT, CORRECT          |
+      | BAARD   | BAARD   | BAA.D  | CORRECT, CORRECT, CORRECT, CORRECT, CORRECT, CORRECT   |
