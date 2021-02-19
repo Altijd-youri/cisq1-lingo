@@ -4,8 +4,10 @@ import java.util.List;
 
 public class Feedback {
     private final List<Mark> marks;
+    private final String guess;
 
-    Feedback(List<Mark> marks) {
+    Feedback(String guess, List<Mark> marks) {
+        this.guess = guess;
         this.marks = marks;
     }
 
