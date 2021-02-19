@@ -34,14 +34,9 @@ Feature: Training for Lingo
     When I guess "<guess>"
     Then The feedback should be "<feedback>"
 
-    Feedback legend:
-      (i): incorrect
-      (c): correct
-      (p): present
-
     Examples:
-      | word    | guess   | feedback                  |
-      | tosti   | combi   | c(i) o(c) m(i) b(i) i(c)  |
-      | tosti   | conti   | c(i) o(c) n(i) t(c) i(c)  |
-      | tosti   | tosti   | t(c) o(c) s(c) t(c) i(c)  |
+      | word    | guess   | feedback                                            |
+      | tosti   | combi   | INCORRECT,  CORRECT,  INCORRECT, INCORRECT, CORRECT |
+      | tosti   | conti   | INCORRECT, CORRECT, INCORRECT, CORRECT, CORRECT     |
+      | tosti   | tosti   | CORRECT, CORRECT, CORRECT, CORRECT, CORRECT         |
 
