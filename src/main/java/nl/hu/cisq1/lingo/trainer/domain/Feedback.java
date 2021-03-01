@@ -71,4 +71,8 @@ public class Feedback {
                 .noneMatch(Mark.INVALID::equals);
     }
 
+    @Override
+    public String toString() {
+        return "Feedback{marks=" + marks +'}';
+    }
 }
