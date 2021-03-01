@@ -2,13 +2,15 @@ package nl.hu.cisq1.lingo.trainer.domain;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.stream.Collectors;
+import java.util.stream.IntStream;
 
 public class Feedback {
     private final List<Mark> marks;
     private final String guess;
     private final String answer;
 
-    Feedback(String guess, String answer) {
+    Feedback(String answer, String guess) {
         this.guess = guess;
         this.answer = answer;
         this.marks = this.compare();
@@ -17,28 +19,40 @@ public class Feedback {
     private List<Mark> compare() {
         List<Mark> marks = new ArrayList<>();
         String guessCharaters = guess;
+        String answerCharaters = answer;
 
         if (answer.length() != guess.length()) {
-            for (int i = 0; i < answer.length(); i++) {
-                marks.add(Mark.INVALID);
-            }
+            marks = IntStream.range(0, answer.length()).mapToObj(i -> Mark.INVALID).collect(Collectors.toList());
             return marks;
         }
-        for (int answerPosition = 0; answerPosition < answer.length(); answerPosition++) {
-            Character answerletter = answer.charAt(answerPosition);
-            for (int guessPosition = 0; guessPosition < guess.length(); guessPosition++) {
-                Character guessLetter = guess.charAt(answerPosition);
 
-                if (answerletter.equals(guessLetter)) {
-                    marks.add(Mark.CORRECT);
-                    continue;
+        int answerPosition = 0;
+        while(answerPosition < answerCharaters.length()) {
+            Character answerletter = answerCharaters.charAt(answerPosition);
+            Character guessLetter = guessCharaters.charAt(answerPosition);
+
+            Mark mark = Mark.INCORRECT;
+            int addition = 1;
+            if (answerletter.equals(guessLetter)) {
+                mark = Mark.CORRECT;
+
+            } else if (answerCharaters.contains(guessLetter.toString())) {
+                int index = answerCharaters.indexOf(guessLetter);
+                if (index > 0) { //Letter is contained in answer
+                    int indexSecond = guessCharaters.indexOf(guessLetter,answerPosition+1);
+                    if(indexSecond!=-1) { //Letter is contained a second time in the guess
+                        Character nextOccurrenceInAnswer = answerCharaters.charAt(indexSecond);
+                        Character nextOccurrenceInGuess = guessCharaters.charAt(indexSecond);
+                        if (!nextOccurrenceInAnswer.equals(nextOccurrenceInGuess)) { //Next occurance in answer and guess do not match.
+                            mark = Mark.PRESENT;
+                        }
+                    } else {
+                        mark = Mark.PRESENT;
+                    }
                 }
-                if (answer.contains(guessCharaters)) {
-                    marks.add(Mark.PRESENT);
-                    continue;
-                }
-                marks.add(Mark.INCORRECT);
             }
+            marks.add(mark);
+            answerPosition = answerPosition + addition;
         }
         return marks;
     }
