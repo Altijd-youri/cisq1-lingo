@@ -1,6 +1,14 @@
 name: Java CI
 
-on: [push]
+on:
+  push:
+    paths-ignore:
+      - 'docs/**'
+      - 'development/**'
+      - '**.md'
+      - '.github/**'
+    branches:
+      - main
 
 jobs:
   build:
