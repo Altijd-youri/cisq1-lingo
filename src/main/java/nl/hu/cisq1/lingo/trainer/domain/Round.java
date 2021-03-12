@@ -1,14 +1,14 @@
 package nl.hu.cisq1.lingo.trainer.domain;
 
 public class Round {
-    private int roundNumber;
+    private final int roundNumber;
     private String word = "";
     private Status status;
 
-    public Round(int roundNumber, int wordLength) {
+    public Round(int roundNumber, String word) {
         this.roundNumber = roundNumber;
         this.status = Status.ACTIVE;
-        this.word = "";
+        this.word = word;
     }
 
     public int wordLength() {

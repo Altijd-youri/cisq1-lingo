@@ -11,7 +11,7 @@ class GuessTest {
 
     @BeforeEach
     void createNewRound() {
-        this.round = new Round(1,5);
+        this.round = new Round(1,"BAARD");
     }
 
     @DisplayName("Hint is correct when it match the expected hint.")
