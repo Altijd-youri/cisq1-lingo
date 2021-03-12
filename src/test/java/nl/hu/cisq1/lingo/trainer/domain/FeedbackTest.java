@@ -2,14 +2,18 @@ package nl.hu.cisq1.lingo.trainer.domain;
 
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.params.ParameterizedTest;
+import org.junit.jupiter.params.provider.Arguments;
+import org.junit.jupiter.params.provider.MethodSource;
 
 import java.util.List;
+import java.util.stream.Stream;
 
 import static org.junit.jupiter.api.Assertions.*;
 
 class FeedbackTest {
-    private final String CORRECTWORD = "BAARD";
-    private final List CORRECTMARKS = List.of(Mark.CORRECT, Mark.CORRECT, Mark.CORRECT, Mark.CORRECT, Mark.CORRECT);
+    private static final String CORRECTWORD = "BAARD";
+    private static final List CORRECTMARKS = List.of(Mark.CORRECT, Mark.CORRECT, Mark.CORRECT, Mark.CORRECT, Mark.CORRECT);
 
     @Test
     @DisplayName("Word is guessed if all letters are correct")
@@ -39,23 +43,21 @@ class FeedbackTest {
         assertFalse(feedback.isWordValid());
     }
 
-    @Test
-    @DisplayName("Feedback is correct when it mataches the expected feedback.")
-    void feedbackIsCorrect() {
-        //I added one test at the time, then improved/refactored and added the next one.
-        Feedback feedback = new Feedback(CORRECTWORD, "BONJE");
-        assertEquals( List.of(Mark.CORRECT, Mark.INCORRECT, Mark.INCORRECT, Mark.INCORRECT, Mark.INCORRECT), feedback.getMarks());
+    private static Stream<Arguments> feedbackTestcases() {
+        return Stream.of(
+                Arguments.of(List.of(Mark.CORRECT, Mark.INCORRECT, Mark.INCORRECT, Mark.INCORRECT, Mark.INCORRECT), "BAARD", "BONJE"),
+                Arguments.of(List.of(Mark.CORRECT, Mark.CORRECT, Mark.PRESENT, Mark.INCORRECT, Mark.INCORRECT), "BAARD", "BARST"),
+                Arguments.of(List.of(Mark.INCORRECT, Mark.PRESENT, Mark.CORRECT, Mark.PRESENT, Mark.CORRECT), "BAARD", "DRAAD"),
+                Arguments.of(CORRECTMARKS, CORRECTWORD, CORRECTWORD),
+                Arguments.of(List.of(Mark.PRESENT, Mark.PRESENT, Mark.CORRECT, Mark.PRESENT, Mark.INCORRECT), "BAADR", "DRAAD")
+        );
+    }
 
-        //This one failed, so I added a better check for Present.
-        feedback = new Feedback(CORRECTWORD, "BARST");
-            assertEquals(List.of(Mark.CORRECT, Mark.CORRECT, Mark.PRESENT, Mark.INCORRECT, Mark.INCORRECT), feedback.getMarks());
-
-        //This one failed, so I added a mechanic to determine if a letters exists more than one time and if the second time the letter should be marked correct.
-        feedback = new Feedback(CORRECTWORD, "DRAAD");
-        assertEquals(List.of(Mark.INCORRECT, Mark.PRESENT, Mark.CORRECT, Mark.PRESENT, Mark.CORRECT), feedback.getMarks());
-
-        //This one failed, so I added a mechanic to save Present marks across feedback items.
-        feedback = new Feedback(CORRECTWORD, CORRECTWORD);
-        assertEquals(CORRECTMARKS, feedback.getMarks());
+    @ParameterizedTest
+    @MethodSource("feedbackTestcases")
+    @DisplayName("Feedback is correct when it matches the expected feedback.")
+    void feedbackIsCorrect(List<Mark> correctMarks, String correctWord, String guessedWord) {
+        Feedback feedback = new Feedback(correctWord, guessedWord);
+        assertEquals(correctMarks, feedback.getMarks());
     }
 }

@@ -16,43 +16,50 @@ public class Feedback {
         this.marks = this.compare();
     }
 
-    private List<Mark> compare() {
-        List<Mark> marks = new ArrayList<>();
-        String guessCharaters = guess;
-        String answerCharaters = answer;
+    private List<Character> stringToCharArray(String str) {
+        List<Character> charList = new ArrayList<>();
+        for (char ch : str.toCharArray()) {
+            charList.add(ch);
+        }
+        return charList;
+    }
 
-        if (answer.length() != guess.length()) {
-            marks = IntStream.range(0, answer.length()).mapToObj(i -> Mark.INVALID).collect(Collectors.toList());
-            return marks;
+    private List<Mark> markAll(Mark mark) {
+        return IntStream.range(0, this.answer.length()).mapToObj(i -> mark).collect(Collectors.toList());
+    }
+
+    private List<Mark> compare() {
+        if (guess.equals(answer)) {
+            return markAll(Mark.CORRECT);
         }
 
-        int answerPosition = 0;
-        while(answerPosition < answerCharaters.length()) {
-            Character answerletter = answerCharaters.charAt(answerPosition);
-            Character guessLetter = guessCharaters.charAt(answerPosition);
+        if (guess.length() != answer.length()) {
+            return markAll(Mark.INVALID);
+        }
 
-            Mark mark = Mark.INCORRECT;
-            int addition = 1;
-            if (answerletter.equals(guessLetter)) {
-                mark = Mark.CORRECT;
+        List<Character> answerCharacters = stringToCharArray(answer);
+        List<Mark> marks = new ArrayList<>();
 
-            } else if (answerCharaters.contains(guessLetter.toString())) {
-                int index = answerCharaters.indexOf(guessLetter);
-                if (index > 0) { //Letter is contained in answer
-                    int indexSecond = guessCharaters.indexOf(guessLetter,answerPosition+1);
-                    if(indexSecond!=-1) { //Letter is contained a second time in the guess
-                        Character nextOccurrenceInAnswer = answerCharaters.charAt(indexSecond);
-                        Character nextOccurrenceInGuess = guessCharaters.charAt(indexSecond);
-                        if (!nextOccurrenceInAnswer.equals(nextOccurrenceInGuess)) { //Next occurance in answer and guess do not match.
-                            mark = Mark.PRESENT;
-                        }
-                    } else {
-                        mark = Mark.PRESENT;
-                    }
-                }
+        for (int position = 0; position < guess.length(); position++) {
+            if (guess.charAt(position) == answer.charAt(position)) {
+                marks.add(Mark.CORRECT);
+                answerCharacters.set(position, null);
+            } else {
+                marks.add(null);
             }
-            marks.add(mark);
-            answerPosition = answerPosition + addition;
+        }
+
+        for (int position = 0; position < guess.length(); position++) {
+            if (marks.get(position) == Mark.CORRECT) continue;
+
+            char letter = guess.charAt(position);
+            int next = answerCharacters.indexOf(letter);
+            if (next > -1) {
+                marks.set(position, Mark.PRESENT);
+                answerCharacters.set(next, null);
+            } else {
+                marks.set(position, Mark.INCORRECT);
+            }
         }
         return marks;
     }
@@ -69,10 +76,5 @@ public class Feedback {
     public boolean isWordValid() {
         return this.marks.stream()
                 .noneMatch(Mark.INVALID::equals);
-    }
-
-    @Override
-    public String toString() {
-        return "Feedback{marks=" + marks +'}';
     }
 }

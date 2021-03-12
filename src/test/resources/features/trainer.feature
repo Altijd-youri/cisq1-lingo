@@ -41,3 +41,11 @@ Feature: Training for Lingo
       | BAARD   | BARST   | B....  | CORRECT, CORRECT, PRESENT, INCORRECT, INCORRECT        |
       | BAARD   | DRAAD   | BA...  | INCORRECT, PRESENT, CORRECT, PRESENT, CORRECT          |
       | BAARD   | BAARD   | BAA.D  | CORRECT, CORRECT, CORRECT, CORRECT, CORRECT, CORRECT   |
+
+    Examples:
+      | word    | guess   | hint   | feedback                                               |
+      | BAARD   | BERGEN  | B....  | INVALID,  INVALID,  INVALID, INVALID, INVALID, INVALID |
+      | BAARD   | BONJE   | B....  | CORRECT, INCORRECT, INCORRECT, INCORRECT, INCORRECT    |
+      | BAARD   | BARST   | B....  | CORRECT, CORRECT, PRESENT, INCORRECT, INCORRECT        |
+      | BAARD   | DRAAD   | BA...  | INCORRECT, PRESENT, CORRECT, PRESENT, CORRECT          |
+      | BAARD   | BAARD   | BAA.D  | CORRECT, CORRECT, CORRECT, CORRECT, CORRECT, CORRECT   |
