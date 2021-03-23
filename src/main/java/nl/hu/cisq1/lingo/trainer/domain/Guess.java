@@ -2,43 +2,56 @@ package nl.hu.cisq1.lingo.trainer.domain;
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.stream.Stream;
+import java.util.stream.Collectors;
 
 public class Guess {
     private Feedback feedback;
     private Round round;
-    private final String WORD = "Baard"; //Temporary
-    private final int LENGTH = 5; //Temporary
+    private String word;
+    private StringBuilder hint;
+    private final String correctWord;
 
-    public Guess(Round round) {
+    public Guess(Round round, String guessedWord) {
         this.round = round;
+        this.word = guessedWord;
+        this.correctWord = this.round.getWord();
+        this.hint = new StringBuilder(".".repeat(round.wordLength()));
+
+        this.feedback = this.getFeedback(this.word);
+        this.round.addGuess(this);
+    }
+
+    private List<Feedback> getPreviousFeedback() {
+        List<Guess> guessHistory = this.round.getGuesses();
+        return guessHistory.stream().map(guess -> guess.getFeedback()).collect(Collectors.toList());
     }
 
     private Feedback getFeedback(String guess) {
-        this.feedback = (this.feedback==null) ? new Feedback(WORD,guess) : this.feedback;
+        this.feedback = (this.feedback==null) ? new Feedback(correctWord,guess) : this.feedback;
+        return this.feedback;
+    }
+
+    public Feedback getFeedback() {
         return this.feedback;
     }
 
     private String createHint(List<Feedback> feedbackHistory) {
-        StringBuilder hintBuilder = new StringBuilder(".".repeat(LENGTH));
-        for(Feedback feedback : feedbackHistory) {
-            if(feedback.isWordValid()) {
-                List<Mark> marks = feedback.getMarks();
-                for(int markCount = 0; markCount < marks.size(); markCount++) {
-                    if(Mark.CORRECT.equals(marks.get(markCount))) {
-                        Character letter = WORD.charAt(markCount);
-                        hintBuilder.replace(markCount, markCount+1,letter.toString());
-                    }
-
+        for (Feedback feedback : feedbackHistory) {
+            List<Mark> marks = feedback.getMarks();
+            for (int position = 0; position < marks.size(); position++) {
+                if (hint.charAt(position) != '.') continue;
+                Mark mark = marks.get(position);
+                if (mark.equals(Mark.CORRECT)) {
+                    String character = String.valueOf(correctWord.charAt(position));
+                    hint.replace(position,position+1,character);
                 }
             }
         }
-        return hintBuilder.toString();
+        return hint.toString();
     }
 
-    public String takeAGuess(String guess) {
-        List<Feedback> feedbackHistory = new ArrayList<>();
-        feedbackHistory.add(this.getFeedback(guess));
+    public String takeAGuess() {
+        List<Feedback> feedbackHistory = this.getPreviousFeedback();
         return createHint(feedbackHistory);
     }
 }

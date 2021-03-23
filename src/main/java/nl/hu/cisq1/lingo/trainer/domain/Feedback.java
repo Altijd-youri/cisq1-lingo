@@ -39,7 +39,6 @@ public class Feedback {
 
         List<Character> answerCharacters = stringToCharArray(answer);
         List<Mark> marks = new ArrayList<>();
-
         for (int position = 0; position < guess.length(); position++) {
             if (guess.charAt(position) == answer.charAt(position)) {
                 marks.add(Mark.CORRECT);
