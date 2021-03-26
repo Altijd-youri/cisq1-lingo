@@ -38,29 +38,29 @@ public class Feedback {
         }
 
         List<Character> answerCharacters = stringToCharArray(answer);
-        List<Mark> marks = new ArrayList<>();
+        List<Mark> markList = new ArrayList<>();
         for (int position = 0; position < guess.length(); position++) {
             if (guess.charAt(position) == answer.charAt(position)) {
-                marks.add(Mark.CORRECT);
+                markList.add(Mark.CORRECT);
                 answerCharacters.set(position, null);
             } else {
-                marks.add(null);
+                markList.add(null);
             }
         }
 
         for (int position = 0; position < guess.length(); position++) {
-            if (marks.get(position) == Mark.CORRECT) continue;
+            if (markList.get(position) == Mark.CORRECT) continue;
 
             char letter = guess.charAt(position);
             int next = answerCharacters.indexOf(letter);
             if (next > -1) {
-                marks.set(position, Mark.PRESENT);
+                markList.set(position, Mark.PRESENT);
                 answerCharacters.set(next, null);
             } else {
-                marks.set(position, Mark.INCORRECT);
+                markList.set(position, Mark.INCORRECT);
             }
         }
-        return marks;
+        return markList;
     }
 
     public List<Mark> getMarks() {

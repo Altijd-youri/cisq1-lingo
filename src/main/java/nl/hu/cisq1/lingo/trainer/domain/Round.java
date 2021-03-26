@@ -3,12 +3,13 @@ package nl.hu.cisq1.lingo.trainer.domain;
 import nl.hu.cisq1.lingo.trainer.domain.exceptions.InvalidGuessException;
 
 import java.util.ArrayList;
+import java.util.List;
 
 public class Round {
     private final int roundNumber;
     private String word = "";
     private Status status;
-    private ArrayList<Guess> guesses;
+    private List<Guess> guesses;
 
     public Round(int roundNumber, String word) {
         this.roundNumber = roundNumber;
@@ -25,7 +26,7 @@ public class Round {
         return this.word;
     }
 
-    public ArrayList<Guess> getGuesses() {
+    public List<Guess> getGuesses() {
         return guesses;
     }
 
