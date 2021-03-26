@@ -1,6 +1,7 @@
 package nl.hu.cisq1.lingo.trainer.domain;
 
-import java.util.ArrayList;
+import nl.hu.cisq1.lingo.trainer.domain.exceptions.InvalidGuessException;
+
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -18,7 +19,6 @@ public class Guess {
         this.hint = new StringBuilder(".".repeat(round.wordLength()));
 
         this.feedback = this.getFeedback(this.word);
-        this.round.addGuess(this);
     }
 
     private List<Feedback> getPreviousFeedback() {
@@ -50,8 +50,13 @@ public class Guess {
         return hint.toString();
     }
 
-    public String takeAGuess() {
+    public String takeAGuess() throws InvalidGuessException {
+        if(!feedback.isWordValid()) throw new InvalidGuessException();
         List<Feedback> feedbackHistory = this.getPreviousFeedback();
         return createHint(feedbackHistory);
+    }
+
+    public boolean isWordGuessed() {
+        return this.feedback.isWordGuessed();
     }
 }
