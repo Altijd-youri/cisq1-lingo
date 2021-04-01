@@ -2,6 +2,7 @@ package nl.hu.cisq1.lingo.trainer.domain;
 
 import nl.hu.cisq1.lingo.trainer.domain.exceptions.InvalidGuessException;
 import nl.hu.cisq1.lingo.trainer.domain.exceptions.NoValidRoundException;
+import nl.hu.cisq1.lingo.trainer.domain.exceptions.RoundCreationNotAllowedException;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -15,10 +16,10 @@ public class Game {
         this.score = 0;
     }
 
-    public void newRound(String word) {
-        int roundNumber = this.rounds.size();
-        Round newRound = new Round(roundNumber, word);
+    public void newRound(String word) throws RoundCreationNotAllowedException {
+        checkNewRoundValidity();
 
+        Round newRound = new Round(word);
         this.rounds.add(newRound);
     }
 
@@ -28,6 +29,8 @@ public class Game {
         return lastRound.guessWord(guessedWord);
     }
 
+
+
     private Optional<Round> getLastRound() {
         int size = this.rounds.size();
         if (size > 0) {
@@ -35,5 +38,18 @@ public class Game {
             return Optional.ofNullable(this.rounds.get(index));
         }
         return Optional.empty();
+    }
+
+    private void checkNewRoundValidity() throws RoundCreationNotAllowedException {
+        if (maxRoundsReached() || aRoundisActive()) throw new RoundCreationNotAllowedException();
+    }
+
+    private boolean maxRoundsReached() {
+        return this.rounds.size() >= 3;
+    }
+
+    private boolean aRoundisActive() {
+        Optional<Round> lastRound = getLastRound();
+        return lastRound.isPresent() && lastRound.get().isActive();
     }
 }

@@ -10,7 +10,7 @@ class RoundTest {
     @DisplayName("Word length is expected.")
     @Test
     void wordLength() {
-        Round round = new Round(1,"BAARD");
+        Round round = new Round("BAARD");
 
         assertEquals(5, round.wordLength());
     }

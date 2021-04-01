@@ -6,13 +6,11 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class Round {
-    private final int roundNumber;
-    private String word = "";
+    private String word;
     private Status status;
     private List<Guess> guesses;
 
-    public Round(int roundNumber, String word) {
-        this.roundNumber = roundNumber;
+    public Round(String word) {
         this.status = Status.ACTIVE;
         this.word = word;
         this.guesses = new ArrayList<>();
@@ -36,10 +34,21 @@ public class Round {
 
         String hint = newGuess.takeAGuess();
 
-        if(newGuess.isWordGuessed()) {
-            System.out.println("ROUND ENDED");
-        }
+        if(newGuess.isWordGuessed()) this.markAsEnded(Status.WON);
+        if(this.getGuesses().size() >= 5) this.markAsEnded(Status.LOST);
 
         return hint;
+    }
+
+    private void markAsEnded(Status status) {
+        this.status = status;
+    }
+
+    public Status getStatus() {
+        return this.status;
+    }
+
+    public boolean isActive() {
+        return getStatus().equals(Status.ACTIVE);
     }
 }
