@@ -34,8 +34,13 @@ public class Round {
 
         String hint = newGuess.takeAGuess();
 
-        if(newGuess.isWordGuessed()) this.markAsEnded(Status.WON);
-        if(this.getGuesses().size() >= 5) this.markAsEnded(Status.LOST);
+        if(newGuess.isWordGuessed()) {
+            this.markAsEnded(Status.WON);
+            return hint;
+        }
+        if(this.getGuesses().size() >= 5) {
+            this.markAsEnded(Status.LOST);
+        }
 
         return hint;
     }
