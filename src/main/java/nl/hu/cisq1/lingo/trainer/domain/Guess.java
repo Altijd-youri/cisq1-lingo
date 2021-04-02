@@ -6,29 +6,26 @@ import java.util.List;
 import java.util.stream.Collectors;
 
 public class Guess {
-    private Feedback feedback;
-    private Round round;
-    private String word;
-    private StringBuilder hint;
+    private final Feedback feedback;
+    private final Round round;
+    private final StringBuilder hint;
     private final String correctWord;
 
     public Guess(Round round, String guessedWord) {
         this.round = round;
-        this.word = guessedWord;
         this.correctWord = this.round.getWord();
         this.hint = new StringBuilder(".".repeat(round.wordLength()));
 
-        this.feedback = this.getFeedback(this.word);
+        this.feedback = this.generateFeedback(guessedWord);
     }
 
     private List<Feedback> getPreviousFeedback() {
         List<Guess> guessHistory = this.round.getGuesses();
-        return guessHistory.stream().map(guess -> guess.getFeedback()).collect(Collectors.toList());
+        return guessHistory.stream().map(Guess::getFeedback).collect(Collectors.toList());
     }
 
-    private Feedback getFeedback(String guess) {
-        this.feedback = (this.feedback==null) ? new Feedback(correctWord,guess) : this.feedback;
-        return this.feedback;
+    private Feedback generateFeedback(String guess) {
+        return new Feedback(correctWord,guess);
     }
 
     public Feedback getFeedback() {
