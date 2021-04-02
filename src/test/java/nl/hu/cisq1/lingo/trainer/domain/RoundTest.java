@@ -37,7 +37,7 @@ class RoundTest {
         assertEquals(Status.LOST, round.getStatus());
     }
 
-
+    @DisplayName("Prepare a round with the specified amount of wrong attempts.")
     private Round prepareRoundWithSpecifiedWrongAttempts(int allowedAttempts, String correctWord) {
         Round round = new Round(correctWord);
         try {

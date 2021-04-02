@@ -13,8 +13,8 @@ class GuessTest {
     private Game game;
 
     @BeforeEach
-    @DisplayName("Create a game once.")
-    private void createGameTest() {
+    @DisplayName("Create a game once for each test")
+    void createGameTest() {
         try {
             this.game = new Game();
             this.game.newRound("BAARD");

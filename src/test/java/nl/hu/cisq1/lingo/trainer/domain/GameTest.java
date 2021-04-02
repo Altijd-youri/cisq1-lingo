@@ -33,7 +33,6 @@ class GameTest {
     }
 
     @DisplayName("Prepare a game with specified amount of won games")
-    @Test
     private Game prepareGameWithSpecifiedAmountOfWonGames(int amountOfWonGames) {
         Game game = new Game();
 
