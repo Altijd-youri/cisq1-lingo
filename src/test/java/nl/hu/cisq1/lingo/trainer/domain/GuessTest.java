@@ -2,7 +2,7 @@ package nl.hu.cisq1.lingo.trainer.domain;
 
 import nl.hu.cisq1.lingo.trainer.domain.exceptions.InvalidGuessException;
 import nl.hu.cisq1.lingo.trainer.domain.exceptions.MaxRoundsReachedException;
-import nl.hu.cisq1.lingo.trainer.domain.exceptions.NoValidRoundException;
+import nl.hu.cisq1.lingo.trainer.domain.exceptions.NoActiveRoundException;
 import nl.hu.cisq1.lingo.trainer.domain.exceptions.PreviousRoundNotFinishedException;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
@@ -35,7 +35,7 @@ class GuessTest {
     private void doPartOfOrderedGuessTest(String correct, String guess) {
         try {
             assertEquals(correct, game.guessWord(guess));
-        } catch (NoValidRoundException | InvalidGuessException e) {
+        } catch (NoActiveRoundException | InvalidGuessException e) {
             fail("Should not throw "+e.getClass().getName());
         }
     }
@@ -45,7 +45,7 @@ class GuessTest {
     void wordIsGuessedTest() {
         try {
             assertEquals("BAARD", game.guessWord("BAARD"));
-        } catch (NoValidRoundException | InvalidGuessException e) {
+        } catch (NoActiveRoundException | InvalidGuessException e) {
             fail("Should not throw "+e.getClass().getName());
         }
     }
@@ -62,7 +62,7 @@ class GuessTest {
     void roundIsInvalidTest() {
         this.game = new Game(); //create a game without a round;
 
-        assertThrows(NoValidRoundException.class, () -> game.guessWord("BONJE"));
-        assertThrows(NoValidRoundException.class, () ->  game.guessWord("BAARD"));
+        assertThrows(NoActiveRoundException.class, () -> game.guessWord("BONJE"));
+        assertThrows(NoActiveRoundException.class, () ->  game.guessWord("BAARD"));
     }
 }

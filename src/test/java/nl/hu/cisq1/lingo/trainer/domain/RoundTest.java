@@ -16,6 +16,28 @@ class RoundTest {
         assertEquals(5, round.wordLength());
     }
 
+    @DisplayName("The score is zero while the round is active.")
+    @Test
+    void ScoreIsZeroWhileRoundIsActive() {
+        Round round = new Round("BAARD");
+        assertEquals(0, round.getScore());
+
+        try {
+            round.guessWord("GUESS");
+        } catch (InvalidGuessException e) {
+            fail("Exception thrown while arranging test.");
+        }
+        assertEquals(0, round.getScore());
+    }
+
+    @DisplayName("Score is as expected when the word is not guessed before the round ends.")
+    @Test
+    void scoreIsCorrectAfterFiveGuesses() {
+        Round round = prepareRoundWithSpecifiedWrongAttempts(5, "BAARD");
+
+        assertEquals(5, round.getScore());
+    }
+
     @DisplayName("Round is won when the word is guessed after four attempts.")
     @Test
     void RoundWonWhenGuessedAfterFourAttempts() {
@@ -23,7 +45,7 @@ class RoundTest {
         try {
             round.guessWord("BAARD");
         } catch (InvalidGuessException e) {
-            fail("Excpection thrown while arranging test.");
+            fail("Exception thrown while arranging test.");
         }
 
         assertEquals(Status.WON, round.getStatus());
@@ -41,7 +63,7 @@ class RoundTest {
     private Round prepareRoundWithSpecifiedWrongAttempts(int allowedAttempts, String correctWord) {
         Round round = new Round(correctWord);
         try {
-            for (int index = 0; index <= allowedAttempts; index++) {
+            for (int index = 0; index < allowedAttempts; index++) {
                 round.guessWord("NOTIT");
             }
         } catch (InvalidGuessException e) {
