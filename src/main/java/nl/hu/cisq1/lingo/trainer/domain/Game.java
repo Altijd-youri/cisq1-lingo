@@ -12,9 +12,11 @@ import java.util.Optional;
 public class Game {
     private List<Round> rounds = new ArrayList<>();
     private int score;
+    private Status status;
 
     public Game() {
         this.score = 0;
+        this.status = Status.ACTIVE;
     }
 
     public int getScore() {
@@ -27,9 +29,9 @@ public class Game {
      * @throws PreviousRoundNotFinishedException Thrown when there already is another active round for this game.
      * @throws MaxRoundsReachedException Thrown when this game has reached the maximum amount of playable rounds. (Start a new Game)
      */
-    public void newRound(String word) throws PreviousRoundNotFinishedException, MaxRoundsReachedException {
-        if (maxRoundsReached()) throw new MaxRoundsReachedException();
-        if (aRoundisActive()) throw new PreviousRoundNotFinishedException();
+    public void newRound(String word) throws PreviousRoundNotFinishedException, NoActiveRoundException {
+        if (!gameIsActive()) throw new NoActiveRoundException();
+        if (roundIsActive()) throw new PreviousRoundNotFinishedException();
 
         Round newRound = new Round(word);
         this.rounds.add(newRound);
@@ -49,6 +51,16 @@ public class Game {
         String hint = lastRound.guessWord(guessedWord);
         addToScore(lastRound.getScore());
 
+        switch (lastRound.getStatus()) {
+            case LOST:
+                markAsEnded(Status.LOST);
+                break;
+            case WON:
+            case ACTIVE:
+            default:
+                break;
+        }
+
         return hint;
     }
 
@@ -65,12 +77,16 @@ public class Game {
         this.score += points;
     }
 
-    private boolean maxRoundsReached() {
-        return this.rounds.size() >= 3;
+    private boolean gameIsActive() {
+        return Status.ACTIVE.equals(this.status);
     }
 
-    private boolean aRoundisActive() {
+    private boolean roundIsActive() {
         Optional<Round> lastRound = getLastRound();
         return lastRound.isPresent() && lastRound.get().isActive();
+    }
+
+    private void markAsEnded(Status status) {
+        this.status = status;
     }
 }

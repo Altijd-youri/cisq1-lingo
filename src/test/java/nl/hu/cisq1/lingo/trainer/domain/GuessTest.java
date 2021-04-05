@@ -1,7 +1,6 @@
 package nl.hu.cisq1.lingo.trainer.domain;
 
 import nl.hu.cisq1.lingo.trainer.domain.exceptions.InvalidGuessException;
-import nl.hu.cisq1.lingo.trainer.domain.exceptions.MaxRoundsReachedException;
 import nl.hu.cisq1.lingo.trainer.domain.exceptions.NoActiveRoundException;
 import nl.hu.cisq1.lingo.trainer.domain.exceptions.PreviousRoundNotFinishedException;
 import org.junit.jupiter.api.BeforeEach;
@@ -18,7 +17,7 @@ class GuessTest {
         try {
             this.game = new Game();
             this.game.newRound("BAARD");
-        } catch (PreviousRoundNotFinishedException | MaxRoundsReachedException e) {
+        } catch (PreviousRoundNotFinishedException | NoActiveRoundException e) {
             fail("Round creation not allowed exception was thrown while preparing tests.");
         }
     }

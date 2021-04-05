@@ -23,7 +23,7 @@ class GameTest {
         Game game = prepareGameWithSpecifiedAmountOfWonGames(0);
         try {
             game.newRound("ZEVEN");
-        } catch (PreviousRoundNotFinishedException | MaxRoundsReachedException e) {
+        } catch (PreviousRoundNotFinishedException | NoActiveRoundException e) {
             fail("Arranging the game with a round in progress failed.");
         }
 
@@ -36,7 +36,7 @@ class GameTest {
         Game game = prepareGameWithSpecifiedAmountOfWonGames(0);
         try {
             game.newRound("GUESS");
-        } catch (PreviousRoundNotFinishedException | MaxRoundsReachedException e) {
+        } catch (PreviousRoundNotFinishedException | NoActiveRoundException e) {
             fail("Arranging the game with a round in progress failed.");
         }
         try {
@@ -56,12 +56,21 @@ class GameTest {
         assertEquals(75, game.getScore());
     }
 
-    @DisplayName("A game may not have more than three rounds.")
+    @DisplayName("A game is only playable while the game is active.")
     @Test
-    void noMoreThanThreeRounds() {
+    void whileGameIsNotLost() {
         Game game = prepareGameWithSpecifiedAmountOfWonGames(3);
 
-        assertThrows(MaxRoundsReachedException.class, () -> game.newRound("WOORD"));
+        int allowedAttempts = 5;
+        for (int index = 0; index <= allowedAttempts; index++) { //Five incorect guesses to LOSE the round and thus the game.
+            try {
+                game.guessWord("BAARD");
+            } catch (InvalidGuessException | NoActiveRoundException e) {
+                fail("Exception thrown while arranging test.");
+            }
+        }
+
+        assertThrows(NoActiveRoundException.class, () -> game.newRound("WOORD"));
     }
 
     @DisplayName("Prepare a game with specified amount of won games")
@@ -71,7 +80,7 @@ class GameTest {
         for (int index = 0; index < amountOfWonGames; index++) {
             try { //Start new Round
                 game.newRound("WOORD");
-            } catch (PreviousRoundNotFinishedException | MaxRoundsReachedException e) {
+            } catch (PreviousRoundNotFinishedException | NoActiveRoundException e) {
                 fail("Exception thrown while arranging test.");
             }
 
