@@ -1,13 +1,23 @@
 package nl.hu.cisq1.lingo.trainer.domain;
 
+import nl.hu.cisq1.lingo.trainer.domain.enums.Status;
 import nl.hu.cisq1.lingo.trainer.domain.exceptions.InvalidGuessException;
 
+import javax.persistence.*;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.UUID;
 
+@Entity
 public class Round {
+    @Id
+    @GeneratedValue
+    private UUID id;
+    @Column
     private String word;
+    @Column
     private Status status;
+    @OneToMany
     private List<Guess> guesses;
 
     public Round(String word) {
@@ -15,6 +25,8 @@ public class Round {
         this.word = word;
         this.guesses = new ArrayList<>();
     }
+
+    public Round() {}
 
     public int wordLength() {
         return word.length();

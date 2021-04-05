@@ -1,20 +1,32 @@
 package nl.hu.cisq1.lingo.trainer.domain;
 
+import nl.hu.cisq1.lingo.trainer.domain.enums.Mark;
+
+import javax.persistence.*;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.Collectors;
 import java.util.stream.IntStream;
 
+@Entity
 public class Feedback {
-    private final List<Mark> marks;
-    private final String guess;
-    private final String answer;
+    @Id
+    @GeneratedValue
+    private Long id;
+    @Lob
+    private List<Mark> marks;
+    @Column
+    private String guess;
+    @Column
+    private String answer;
 
     Feedback(String answer, String guess) {
         this.guess = guess;
         this.answer = answer;
         this.marks = this.compare();
     }
+
+    public Feedback() {}
 
     private List<Character> stringToCharArray(String str) {
         List<Character> charList = new ArrayList<>();

@@ -1,5 +1,6 @@
 package nl.hu.cisq1.lingo.trainer.domain;
 
+import nl.hu.cisq1.lingo.trainer.domain.enums.Status;
 import nl.hu.cisq1.lingo.trainer.domain.exceptions.InvalidGuessException;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;

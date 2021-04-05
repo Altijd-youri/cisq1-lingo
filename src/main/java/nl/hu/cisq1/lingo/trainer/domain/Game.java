@@ -1,17 +1,25 @@
 package nl.hu.cisq1.lingo.trainer.domain;
 
+import nl.hu.cisq1.lingo.trainer.domain.enums.Status;
 import nl.hu.cisq1.lingo.trainer.domain.exceptions.InvalidGuessException;
-import nl.hu.cisq1.lingo.trainer.domain.exceptions.MaxRoundsReachedException;
 import nl.hu.cisq1.lingo.trainer.domain.exceptions.NoActiveRoundException;
 import nl.hu.cisq1.lingo.trainer.domain.exceptions.PreviousRoundNotFinishedException;
 
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Optional;
+import javax.persistence.Column;
+import javax.persistence.Entity;
+import javax.persistence.Id;
+import javax.persistence.OneToMany;
+import java.util.*;
 
+@Entity
 public class Game {
+    @Id
+    private final UUID id = UUID.randomUUID();
+    @OneToMany
     private List<Round> rounds = new ArrayList<>();
+    @Column
     private int score;
+    @Column
     private Status status;
 
     public Game() {
@@ -27,7 +35,7 @@ public class Game {
      *
      * @param word The word to be guessed.
      * @throws PreviousRoundNotFinishedException Thrown when there already is another active round for this game.
-     * @throws MaxRoundsReachedException Thrown when this game has reached the maximum amount of playable rounds. (Start a new Game)
+     * @throws NoActiveRoundException Thrown when the game has ended. (Start a new Game)
      */
     public void newRound(String word) throws PreviousRoundNotFinishedException, NoActiveRoundException {
         if (!gameIsActive()) throw new NoActiveRoundException();
