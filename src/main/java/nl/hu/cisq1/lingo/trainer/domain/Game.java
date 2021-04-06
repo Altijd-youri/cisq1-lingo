@@ -14,7 +14,7 @@ import java.util.*;
 @Entity
 public class Game {
     @Id
-    private final UUID id = UUID.randomUUID();
+    private UUID id = UUID.randomUUID();
     @OneToMany
     private List<Round> rounds = new ArrayList<>();
     @Column
@@ -96,5 +96,9 @@ public class Game {
 
     private void markAsEnded(Status status) {
         this.status = status;
+    }
+
+    public String getId() {
+        return id.toString();
     }
 }

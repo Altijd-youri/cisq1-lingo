@@ -32,8 +32,8 @@ public class TrainerService {
         gameRepository.save(game);
     }
 
-    public void startNewRound(UUID uuid) throws InstanceNotFoundException, NoActiveRoundException, PreviousRoundNotFinishedException {
-        Optional<Game> optionalGame = gameRepository.findById(uuid);
+    public void startNewRound(String uuid) throws InstanceNotFoundException, NoActiveRoundException, PreviousRoundNotFinishedException {
+        Optional<Game> optionalGame = gameRepository.findById(UUID.fromString(uuid));
         if (!optionalGame.isPresent()) throw new InstanceNotFoundException("Game with given Id doesn't exsists.");
 
         Game game = optionalGame.get();
@@ -46,8 +46,8 @@ public class TrainerService {
         gameRepository.save(game);
     }
 
-    public void guessWord(UUID uuid, String guess) throws InstanceNotFoundException, NoActiveRoundException, InvalidGuessException {
-        Optional<Game> optionalGame = gameRepository.findById(uuid);
+    public void guessWord(String uuid, String guess) throws InstanceNotFoundException, NoActiveRoundException, InvalidGuessException {
+        Optional<Game> optionalGame = gameRepository.findById(UUID.fromString(uuid));
         if (!optionalGame.isPresent()) throw new InstanceNotFoundException("Game with given Id doesn't exsists.");
 
         Game game = optionalGame.get();
