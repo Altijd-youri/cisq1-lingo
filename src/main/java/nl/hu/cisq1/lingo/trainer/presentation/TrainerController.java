@@ -66,7 +66,7 @@ public class TrainerController {
             return new GameResponseDTO(game.getId(), game.getNumberOfRounds(), game.getScore(), game.getStatus().toString());
         } catch (InstanceNotFoundException e) {
             throw new ResponseStatusException(HttpStatus.NOT_FOUND);
-        } catch (NoActiveRoundException e) {
+        } catch (NoActiveRoundException | NoActiveGameException e) {
             throw  new ResponseStatusException(HttpStatus.CONFLICT);
         } catch (InvalidGuessException e) {
             throw new ResponseStatusException(HttpStatus.BAD_REQUEST);

@@ -72,9 +72,33 @@ class TrainerServiceTest {
 
         try {
             service.guessWord(game.getId(), "WRONG");
-        } catch (InstanceNotFoundException | NoActiveRoundException | InvalidGuessException e) {
+        } catch (InstanceNotFoundException | NoActiveRoundException | InvalidGuessException | NoActiveGameException e) {
             fail();
         }
+    }
 
+    @Test
+    @DisplayName("Get game status.")
+    void getGameStatus() {
+        Game game = new Game();
+        String uuid = game.getId();
+
+        when(gameRepository.findById(any())).thenReturn(Optional.of(game));
+
+        try {
+            assertEquals(game, service.getStatus(uuid));
+        } catch (InstanceNotFoundException e) {
+            fail("Exception thrown in getStatus(String uuid).");
+        }
+    }
+
+    @Test
+    @DisplayName("Exception when a non-existent game is requested.")
+    void getGameStatusException() {
+        String uuid = "0a0a0a0a-1111-0000-1111-0a0a0a0a0a0a";
+
+        when(gameRepository.findById(any())).thenReturn(Optional.empty());
+
+        assertThrows(InstanceNotFoundException.class, () -> service.getStatus(uuid));
     }
 }

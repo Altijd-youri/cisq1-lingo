@@ -17,9 +17,9 @@ import java.util.UUID;
 @Service
 @Transactional
 public class TrainerService {
-    private WordService wordService;
+    private final WordService wordService;
 
-    private SpringGameRepository gameRepository;
+    private final SpringGameRepository gameRepository;
 
 
     public TrainerService(WordService wordService, SpringGameRepository gameRepository) {
@@ -28,10 +28,7 @@ public class TrainerService {
     }
 
     public Game getStatus(String uuid) throws InstanceNotFoundException {
-        Optional<Game> optionalGame = gameRepository.findById(UUID.fromString(uuid));
-        if (!optionalGame.isPresent()) throw new InstanceNotFoundException("Game with given Id doesn't exsists.");
-
-        return optionalGame.get();
+        return getGame(uuid);
     }
 
     public Game startNewGame() {
@@ -42,10 +39,7 @@ public class TrainerService {
     }
 
     public Game startNewRound(String uuid) throws InstanceNotFoundException, NoActiveRoundException, PreviousRoundNotFinishedException, NoActiveGameException {
-        Optional<Game> optionalGame = gameRepository.findById(UUID.fromString(uuid));
-        if (!optionalGame.isPresent()) throw new InstanceNotFoundException("Game with given Id doesn't exsists.");
-
-        Game game = optionalGame.get();
+        Game game = getGame(uuid);
 
         int length = 5; //TODO - Implement length grow and shrink cycle.
         String word = wordService.provideRandomWord(length);
@@ -56,15 +50,19 @@ public class TrainerService {
         return game;
     }
 
-    public Game guessWord(String uuid, String guess) throws InstanceNotFoundException, NoActiveRoundException, InvalidGuessException {
-        Optional<Game> optionalGame = gameRepository.findById(UUID.fromString(uuid));
-        if (!optionalGame.isPresent()) throw new InstanceNotFoundException("Game with given Id doesn't exsists.");
-
-        Game game = optionalGame.get();
+    public Game guessWord(String uuid, String guess) throws InstanceNotFoundException, NoActiveRoundException, InvalidGuessException, NoActiveGameException {
+        Game game = getGame(uuid);
 
         game.guessWord(guess);
 
         gameRepository.save(game);
         return game;
+    }
+
+    private Game getGame(String uuid) throws InstanceNotFoundException {
+        Optional<Game> optionalGame = gameRepository.findById(UUID.fromString(uuid));
+        if (optionalGame.isEmpty()) throw new InstanceNotFoundException("Game with given Id doesn't exists.");
+
+        return optionalGame.get();
     }
 }

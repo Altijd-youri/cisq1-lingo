@@ -24,6 +24,14 @@ class GameTest {
         assertThrows(PreviousRoundNotFinishedException.class, () -> game.newRound("meter"));
     }
 
+    @DisplayName("Guessing is not allowed when there is no  active round.")
+    @Test
+    void guessWhileNoActiveRound() {
+        Game game = prepareGameWithSpecifiedAmountOfWonGames(0);
+
+        assertThrows(NoActiveRoundException.class, () -> game.guessWord("ZEVEN"));
+    }
+
     @DisplayName("Score is as expected after winning the first round on the first try.")
     @Test
     void scoreIsCorrectAfterOneRound() {

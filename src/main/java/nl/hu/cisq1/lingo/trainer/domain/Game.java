@@ -71,9 +71,9 @@ public class Game {
      */
     public String guessWord(String guessedWord) throws NoActiveRoundException, InvalidGuessException {
         Optional<Round> lastRoundOptional = this.getLastRound();
-        Round lastRound = lastRoundOptional.orElseThrow(NoActiveRoundException::new);
-        if (!lastRound.isActive()) throw new NoActiveRoundException();
-        if (!gameIsActive()) throw new NoActiveRoundException();
+        if (!roundIsActive(lastRoundOptional)) throw new NoActiveRoundException();
+
+        Round lastRound = lastRoundOptional.get();
 
         String hint = lastRound.guessWord(guessedWord);
         addToScore(lastRound.getScore());
@@ -110,7 +110,11 @@ public class Game {
 
     private boolean roundIsActive() {
         Optional<Round> lastRound = getLastRound();
-        return lastRound.isPresent() && lastRound.get().isActive();
+        return roundIsActive(lastRound);
+    }
+
+    private boolean roundIsActive(Optional<Round> optionalRound) {
+        return optionalRound.isPresent() && optionalRound.get().isActive();
     }
 
     private void markAsEnded(Status status) {
