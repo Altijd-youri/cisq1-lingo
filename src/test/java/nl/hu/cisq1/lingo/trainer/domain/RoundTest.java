@@ -2,6 +2,7 @@ package nl.hu.cisq1.lingo.trainer.domain;
 
 import nl.hu.cisq1.lingo.trainer.domain.enums.Status;
 import nl.hu.cisq1.lingo.trainer.domain.exceptions.InvalidGuessException;
+import nl.hu.cisq1.lingo.trainer.domain.exceptions.NoActiveRoundException;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 
@@ -25,7 +26,7 @@ class RoundTest {
 
         try {
             round.guessWord("GUESS");
-        } catch (InvalidGuessException e) {
+        } catch (InvalidGuessException | NoActiveRoundException e) {
             fail("Exception thrown while arranging test.");
         }
         assertEquals(0, round.getScore());
@@ -45,7 +46,7 @@ class RoundTest {
         Round round = prepareRoundWithSpecifiedWrongAttempts(4, "BAARD");
         try {
             round.guessWord("BAARD");
-        } catch (InvalidGuessException e) {
+        } catch (InvalidGuessException | NoActiveRoundException e) {
             fail("Exception thrown while arranging test.");
         }
 
@@ -67,7 +68,7 @@ class RoundTest {
             for (int index = 0; index < allowedAttempts; index++) {
                 round.guessWord("NOTIT");
             }
-        } catch (InvalidGuessException e) {
+        } catch (InvalidGuessException | NoActiveRoundException e) {
             fail("Excpection thrown while arranging test.");
         }
         return round;
