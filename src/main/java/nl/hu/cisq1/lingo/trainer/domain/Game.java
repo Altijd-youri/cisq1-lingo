@@ -71,6 +71,7 @@ public class Game {
     public String guessWord(String guessedWord) throws NoActiveRoundException, InvalidGuessException {
         Optional<Round> lastRoundOptional = this.getLastRound();
         Round lastRound = lastRoundOptional.orElseThrow(NoActiveRoundException::new);
+        if (!lastRound.isActive()) throw new NoActiveRoundException();
         if (!gameIsActive()) throw new NoActiveRoundException();
 
         String hint = lastRound.guessWord(guessedWord);

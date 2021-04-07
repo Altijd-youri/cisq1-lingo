@@ -2,6 +2,7 @@ package nl.hu.cisq1.lingo.trainer.domain;
 
 import nl.hu.cisq1.lingo.trainer.domain.enums.Status;
 import nl.hu.cisq1.lingo.trainer.domain.exceptions.InvalidGuessException;
+import nl.hu.cisq1.lingo.trainer.domain.exceptions.NoActiveRoundException;
 import org.hibernate.annotations.Cascade;
 import org.hibernate.annotations.CascadeType;
 
@@ -59,7 +60,9 @@ public class Round {
      * @return String - Hint based on the guess.
      * @throws InvalidGuessException Thrown when the length of the guessed word is incorrect.
      */
-    public String guessWord(String guessedWord) throws InvalidGuessException {
+    public String guessWord(String guessedWord) throws InvalidGuessException, NoActiveRoundException {
+        if(!isActive()) throw new NoActiveRoundException();
+
         Guess newGuess = new Guess(this, guessedWord);
         this.guesses.add(newGuess);
 

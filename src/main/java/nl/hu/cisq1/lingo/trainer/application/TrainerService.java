@@ -26,6 +26,13 @@ public class TrainerService {
         this.gameRepository = gameRepository;
     }
 
+    public Game getStatus(String uuid) throws InstanceNotFoundException {
+        Optional<Game> optionalGame = gameRepository.findById(UUID.fromString(uuid));
+        if (!optionalGame.isPresent()) throw new InstanceNotFoundException("Game with given Id doesn't exsists.");
+
+        return optionalGame.get();
+    }
+
     public Game startNewGame() {
         Game game = new Game();
 
