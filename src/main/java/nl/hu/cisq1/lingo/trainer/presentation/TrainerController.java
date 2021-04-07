@@ -71,6 +71,5 @@ public class TrainerController {
         } catch (InvalidGuessException e) {
             throw new ResponseStatusException(HttpStatus.BAD_REQUEST);
         }
-
     }
 }
