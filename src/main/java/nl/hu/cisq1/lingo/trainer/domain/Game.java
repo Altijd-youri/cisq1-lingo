@@ -4,11 +4,10 @@ import nl.hu.cisq1.lingo.trainer.domain.enums.Status;
 import nl.hu.cisq1.lingo.trainer.domain.exceptions.InvalidGuessException;
 import nl.hu.cisq1.lingo.trainer.domain.exceptions.NoActiveRoundException;
 import nl.hu.cisq1.lingo.trainer.domain.exceptions.PreviousRoundNotFinishedException;
+import org.hibernate.annotations.Cascade;
+import org.hibernate.annotations.CascadeType;
 
-import javax.persistence.Column;
-import javax.persistence.Entity;
-import javax.persistence.Id;
-import javax.persistence.OneToMany;
+import javax.persistence.*;
 import java.util.*;
 
 @Entity
@@ -16,6 +15,7 @@ public class Game {
     @Id
     private UUID id = UUID.randomUUID();
     @OneToMany
+    @Cascade(CascadeType.ALL)
     private List<Round> rounds = new ArrayList<>();
     @Column
     private int score;
@@ -31,6 +31,22 @@ public class Game {
         return this.score;
     }
 
+    public List<Round> getRounds() {
+        return rounds;
+    }
+
+    public int getNumberOfRounds() {
+        return getRounds().size();
+    }
+
+    public Status getStatus() {
+        return status;
+    }
+
+    public String getId() {
+        return id.toString();
+    }
+
     /**
      *
      * @param word The word to be guessed.
@@ -42,7 +58,7 @@ public class Game {
         if (roundIsActive()) throw new PreviousRoundNotFinishedException();
 
         Round newRound = new Round(word);
-        this.rounds.add(newRound);
+        getRounds().add(newRound);
     }
 
     /**
@@ -55,6 +71,7 @@ public class Game {
     public String guessWord(String guessedWord) throws NoActiveRoundException, InvalidGuessException {
         Optional<Round> lastRoundOptional = this.getLastRound();
         Round lastRound = lastRoundOptional.orElseThrow(NoActiveRoundException::new);
+        if (!gameIsActive()) throw new NoActiveRoundException();
 
         String hint = lastRound.guessWord(guessedWord);
         addToScore(lastRound.getScore());
@@ -73,10 +90,10 @@ public class Game {
     }
 
     private Optional<Round> getLastRound() {
-        int size = this.rounds.size();
+        int size = getNumberOfRounds();
         if (size > 0) {
             int index = size - 1;
-            return Optional.ofNullable(this.rounds.get(index));
+            return Optional.ofNullable(getRounds().get(index));
         }
         return Optional.empty();
     }
@@ -96,9 +113,5 @@ public class Game {
 
     private void markAsEnded(Status status) {
         this.status = status;
-    }
-
-    public String getId() {
-        return id.toString();
     }
 }

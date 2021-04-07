@@ -2,6 +2,8 @@ package nl.hu.cisq1.lingo.trainer.domain;
 
 import nl.hu.cisq1.lingo.trainer.domain.enums.Status;
 import nl.hu.cisq1.lingo.trainer.domain.exceptions.InvalidGuessException;
+import org.hibernate.annotations.Cascade;
+import org.hibernate.annotations.CascadeType;
 
 import javax.persistence.*;
 import java.util.ArrayList;
@@ -18,6 +20,7 @@ public class Round {
     @Column
     private Status status;
     @OneToMany
+    @Cascade(CascadeType.ALL)
     private List<Guess> guesses;
 
     public Round(String word) {

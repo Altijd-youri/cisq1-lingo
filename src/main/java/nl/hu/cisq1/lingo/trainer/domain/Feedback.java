@@ -13,7 +13,7 @@ public class Feedback {
     @Id
     @GeneratedValue
     private Long id;
-    @Lob
+    @ElementCollection
     private List<Mark> marks;
     @Column
     private String guess;

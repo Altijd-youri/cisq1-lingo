@@ -2,6 +2,8 @@ package nl.hu.cisq1.lingo.trainer.domain;
 
 import nl.hu.cisq1.lingo.trainer.domain.enums.Mark;
 import nl.hu.cisq1.lingo.trainer.domain.exceptions.InvalidGuessException;
+import org.hibernate.annotations.Cascade;
+import org.hibernate.annotations.CascadeType;
 
 import javax.persistence.*;
 import java.util.List;
@@ -13,6 +15,7 @@ public class Guess {
     @GeneratedValue
     private Long id;
     @OneToOne
+    @Cascade(CascadeType.ALL)
     private Feedback feedback;
     @Transient
     private Round round;
