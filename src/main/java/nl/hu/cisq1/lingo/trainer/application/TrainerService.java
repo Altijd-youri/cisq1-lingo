@@ -26,13 +26,14 @@ public class TrainerService {
         this.gameRepository = gameRepository;
     }
 
-    public void startNewGame() {
+    public Game startNewGame() {
         Game game = new Game();
 
         gameRepository.save(game);
+        return game;
     }
 
-    public void startNewRound(String uuid) throws InstanceNotFoundException, NoActiveRoundException, PreviousRoundNotFinishedException {
+    public Game startNewRound(String uuid) throws InstanceNotFoundException, NoActiveRoundException, PreviousRoundNotFinishedException {
         Optional<Game> optionalGame = gameRepository.findById(UUID.fromString(uuid));
         if (!optionalGame.isPresent()) throw new InstanceNotFoundException("Game with given Id doesn't exsists.");
 
@@ -44,9 +45,10 @@ public class TrainerService {
         game.newRound(word);
 
         gameRepository.save(game);
+        return game;
     }
 
-    public void guessWord(String uuid, String guess) throws InstanceNotFoundException, NoActiveRoundException, InvalidGuessException {
+    public Game guessWord(String uuid, String guess) throws InstanceNotFoundException, NoActiveRoundException, InvalidGuessException {
         Optional<Game> optionalGame = gameRepository.findById(UUID.fromString(uuid));
         if (!optionalGame.isPresent()) throw new InstanceNotFoundException("Game with given Id doesn't exsists.");
 
@@ -55,5 +57,6 @@ public class TrainerService {
         game.guessWord(guess);
 
         gameRepository.save(game);
+        return game;
     }
 }
