@@ -1,23 +1,35 @@
 package nl.hu.cisq1.lingo.trainer.domain;
 
+import nl.hu.cisq1.lingo.trainer.domain.enums.Mark;
 import nl.hu.cisq1.lingo.trainer.domain.exceptions.InvalidGuessException;
+import org.hibernate.annotations.Cascade;
+import org.hibernate.annotations.CascadeType;
 
+import javax.persistence.*;
 import java.util.List;
 import java.util.stream.Collectors;
 
+@Entity
 public class Guess {
-    private final Feedback feedback;
-    private final Round round;
-    private final StringBuilder hint;
-    private final String correctWord;
+    @Id
+    @GeneratedValue
+    private Long id;
+    @OneToOne
+    @Cascade(CascadeType.ALL)
+    private Feedback feedback;
+    @Transient
+    private Round round;
+    @Column
+    private String correctWord;
 
     public Guess(Round round, String guessedWord) {
         this.round = round;
         this.correctWord = this.round.getWord();
-        this.hint = new StringBuilder(".".repeat(round.wordLength()));
 
         this.feedback = this.generateFeedback(guessedWord);
     }
+
+    public Guess() {}
 
     private List<Feedback> getPreviousFeedback() {
         List<Guess> guessHistory = this.round.getGuesses();
@@ -33,6 +45,7 @@ public class Guess {
     }
 
     private String createHint(List<Feedback> feedbackHistory) {
+        StringBuilder hint = new StringBuilder(".".repeat(round.wordLength()));
         for (Feedback feedback : feedbackHistory) {
             List<Mark> marks = feedback.getMarks();
             for (int position = 0; position < marks.size(); position++) {

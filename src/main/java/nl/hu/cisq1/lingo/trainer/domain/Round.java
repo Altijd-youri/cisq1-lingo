@@ -1,13 +1,27 @@
 package nl.hu.cisq1.lingo.trainer.domain;
 
+import nl.hu.cisq1.lingo.trainer.domain.enums.Status;
 import nl.hu.cisq1.lingo.trainer.domain.exceptions.InvalidGuessException;
+import nl.hu.cisq1.lingo.trainer.domain.exceptions.NoActiveRoundException;
+import org.hibernate.annotations.Cascade;
+import org.hibernate.annotations.CascadeType;
 
+import javax.persistence.*;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.UUID;
 
+@Entity
 public class Round {
+    @Id
+    @GeneratedValue
+    private UUID id;
+    @Column
     private String word;
+    @Column
     private Status status;
+    @OneToMany
+    @Cascade(CascadeType.ALL)
     private List<Guess> guesses;
 
     public Round(String word) {
@@ -15,6 +29,8 @@ public class Round {
         this.word = word;
         this.guesses = new ArrayList<>();
     }
+
+    public Round() {}
 
     public int wordLength() {
         return word.length();
@@ -44,7 +60,9 @@ public class Round {
      * @return String - Hint based on the guess.
      * @throws InvalidGuessException Thrown when the length of the guessed word is incorrect.
      */
-    public String guessWord(String guessedWord) throws InvalidGuessException {
+    public String guessWord(String guessedWord) throws InvalidGuessException, NoActiveRoundException {
+        if(!isActive()) throw new NoActiveRoundException();
+
         Guess newGuess = new Guess(this, guessedWord);
         this.guesses.add(newGuess);
 
