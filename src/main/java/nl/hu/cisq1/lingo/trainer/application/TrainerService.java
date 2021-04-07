@@ -3,6 +3,7 @@ package nl.hu.cisq1.lingo.trainer.application;
 import nl.hu.cisq1.lingo.trainer.data.SpringGameRepository;
 import nl.hu.cisq1.lingo.trainer.domain.Game;
 import nl.hu.cisq1.lingo.trainer.domain.exceptions.InvalidGuessException;
+import nl.hu.cisq1.lingo.trainer.domain.exceptions.NoActiveGameException;
 import nl.hu.cisq1.lingo.trainer.domain.exceptions.NoActiveRoundException;
 import nl.hu.cisq1.lingo.trainer.domain.exceptions.PreviousRoundNotFinishedException;
 import nl.hu.cisq1.lingo.words.application.WordService;
@@ -40,7 +41,7 @@ public class TrainerService {
         return game;
     }
 
-    public Game startNewRound(String uuid) throws InstanceNotFoundException, NoActiveRoundException, PreviousRoundNotFinishedException {
+    public Game startNewRound(String uuid) throws InstanceNotFoundException, NoActiveRoundException, PreviousRoundNotFinishedException, NoActiveGameException {
         Optional<Game> optionalGame = gameRepository.findById(UUID.fromString(uuid));
         if (!optionalGame.isPresent()) throw new InstanceNotFoundException("Game with given Id doesn't exsists.");
 

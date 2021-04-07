@@ -2,6 +2,7 @@ package nl.hu.cisq1.lingo.trainer.domain;
 
 import nl.hu.cisq1.lingo.trainer.domain.enums.Status;
 import nl.hu.cisq1.lingo.trainer.domain.exceptions.InvalidGuessException;
+import nl.hu.cisq1.lingo.trainer.domain.exceptions.NoActiveGameException;
 import nl.hu.cisq1.lingo.trainer.domain.exceptions.NoActiveRoundException;
 import nl.hu.cisq1.lingo.trainer.domain.exceptions.PreviousRoundNotFinishedException;
 import org.hibernate.annotations.Cascade;
@@ -51,10 +52,10 @@ public class Game {
      *
      * @param word The word to be guessed.
      * @throws PreviousRoundNotFinishedException Thrown when there already is another active round for this game.
-     * @throws NoActiveRoundException Thrown when the game has ended. (Start a new Game)
+     * @throws NoActiveGameException Thrown when the game has ended. (Start a new Game)
      */
-    public void newRound(String word) throws PreviousRoundNotFinishedException, NoActiveRoundException {
-        if (!gameIsActive()) throw new NoActiveRoundException();
+    public void newRound(String word) throws PreviousRoundNotFinishedException, NoActiveGameException {
+        if (!gameIsActive()) throw new NoActiveGameException();
         if (roundIsActive()) throw new PreviousRoundNotFinishedException();
 
         Round newRound = new Round(word);

@@ -3,6 +3,7 @@ package nl.hu.cisq1.lingo.trainer.presentation;
 import nl.hu.cisq1.lingo.trainer.application.TrainerService;
 import nl.hu.cisq1.lingo.trainer.domain.Game;
 import nl.hu.cisq1.lingo.trainer.domain.exceptions.InvalidGuessException;
+import nl.hu.cisq1.lingo.trainer.domain.exceptions.NoActiveGameException;
 import nl.hu.cisq1.lingo.trainer.domain.exceptions.NoActiveRoundException;
 import nl.hu.cisq1.lingo.trainer.domain.exceptions.PreviousRoundNotFinishedException;
 import nl.hu.cisq1.lingo.trainer.presentation.dto.GameResponseDTO;
@@ -51,6 +52,8 @@ public class TrainerController {
             throw new ResponseStatusException(HttpStatus.NOT_FOUND);
         } catch (NoActiveRoundException | PreviousRoundNotFinishedException e) {
             throw  new ResponseStatusException(HttpStatus.CONFLICT);
+        } catch (NoActiveGameException e) {
+            throw new ResponseStatusException(HttpStatus.METHOD_NOT_ALLOWED);
         }
     }
 
