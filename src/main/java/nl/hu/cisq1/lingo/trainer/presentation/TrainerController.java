@@ -2,10 +2,7 @@ package nl.hu.cisq1.lingo.trainer.presentation;
 
 import nl.hu.cisq1.lingo.trainer.application.TrainerService;
 import nl.hu.cisq1.lingo.trainer.domain.Game;
-import nl.hu.cisq1.lingo.trainer.domain.exceptions.InvalidGuessException;
-import nl.hu.cisq1.lingo.trainer.domain.exceptions.NoActiveGameException;
-import nl.hu.cisq1.lingo.trainer.domain.exceptions.NoActiveRoundException;
-import nl.hu.cisq1.lingo.trainer.domain.exceptions.PreviousRoundNotFinishedException;
+import nl.hu.cisq1.lingo.trainer.domain.exceptions.*;
 import nl.hu.cisq1.lingo.trainer.presentation.dto.GameResponseDTO;
 import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.*;
@@ -36,7 +33,7 @@ public class TrainerController {
             Game game = trainerService.getStatus(uuid);
 
             return new GameResponseDTO(game.getId(), game.getNumberOfRounds(), game.getScore(), game.getStatus().toString());
-        } catch (InstanceNotFoundException e) {
+        } catch (GameNotFoundException e) {
             throw new ResponseStatusException(HttpStatus.NOT_FOUND);
         }
     }
@@ -48,7 +45,7 @@ public class TrainerController {
             Game game = trainerService.startNewRound(uuid);
 
             return new GameResponseDTO(game.getId(), game.getNumberOfRounds(), game.getScore(), game.getStatus().toString());
-        } catch (InstanceNotFoundException e) {
+        } catch (GameNotFoundException e) {
             throw new ResponseStatusException(HttpStatus.NOT_FOUND);
         } catch (NoActiveRoundException | PreviousRoundNotFinishedException e) {
             throw  new ResponseStatusException(HttpStatus.CONFLICT);
@@ -64,7 +61,7 @@ public class TrainerController {
             Game game = trainerService.guessWord(uuid, word);
 
             return new GameResponseDTO(game.getId(), game.getNumberOfRounds(), game.getScore(), game.getStatus().toString());
-        } catch (InstanceNotFoundException e) {
+        } catch (GameNotFoundException e) {
             throw new ResponseStatusException(HttpStatus.NOT_FOUND);
         } catch (NoActiveRoundException | NoActiveGameException e) {
             throw  new ResponseStatusException(HttpStatus.CONFLICT);
