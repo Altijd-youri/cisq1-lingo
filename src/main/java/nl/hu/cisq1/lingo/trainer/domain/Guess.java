@@ -14,7 +14,7 @@ public class Guess {
     @Id
     @GeneratedValue
     private Long id;
-    @OneToOne
+    @OneToOne(fetch = FetchType.EAGER)
     @Cascade(CascadeType.ALL)
     private Feedback feedback;
     @Transient
