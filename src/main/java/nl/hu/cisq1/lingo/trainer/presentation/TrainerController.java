@@ -59,8 +59,6 @@ public class TrainerController {
 
     @PatchMapping(value = "/{uuid}/guess")
     public GameResponseDTO guessWord(@PathVariable String uuid, @RequestBody GuessDTO guessDTO) {
-        System.out.println("This ran!");
-
         try {
             Game game = trainerService.guessWord(uuid, guessDTO.getWord());
 
