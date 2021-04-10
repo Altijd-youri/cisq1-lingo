@@ -2,12 +2,12 @@ package nl.hu.cisq1.lingo.trainer.presentation;
 
 import nl.hu.cisq1.lingo.trainer.application.TrainerService;
 import nl.hu.cisq1.lingo.trainer.domain.Game;
+import nl.hu.cisq1.lingo.trainer.domain.exceptions.*;
+import nl.hu.cisq1.lingo.trainer.presentation.dto.GuessDTO;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
-
-import javax.management.InstanceNotFoundException;
 
 import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.ArgumentMatchers.anyString;
@@ -38,55 +38,41 @@ class TrainerControllerTest {
 
     @Test
     @DisplayName("Game status action trigger lower layers.")
-    void getStatus() {
+    void getStatus() throws GameNotFoundException {
         Game game = new Game();
-        try {
-            when(service.getStatus(anyString())).thenReturn(game);
-        } catch (InstanceNotFoundException e) {}
+
+        when(service.getStatus(anyString())).thenReturn(game);
 
         assertNotNull(controller.getStatus("anUuidYouSeeHere"));
-        try {
-            verify(service, times(1)).getStatus(anyString());
-        } catch (Exception e) {
-            fail("Exception thrown while verifying the correct methods were called.");
-        }
+
+        verify(service, times(1)).getStatus(anyString());
     }
 
     @Test
     @DisplayName("Start round action triggers lower layers.")
-    void startARound() {
+    void startARound() throws GameRuleException {
         Game game = new Game();
-        try {
-            when(service.startNewRound(anyString())).thenReturn(game);
-        } catch (Exception e) {
-            fail("Exception thrown while preparing test.");
-        }
+
+        when(service.startNewRound(anyString())).thenReturn(game);
 
         assertNotNull(controller.startARound("anUuidYouSeeHere"));
-        try {
-            verify(service, times(1)).startNewRound(anyString());
-        } catch (Exception e) {
-            fail("Exception thrown while verifying the correct methods were called.");
-        }
+
+        verify(service, times(1)).startNewRound(anyString());
     }
 
     @Test
     @DisplayName("Guess word action triggers lower layers.")
-    void guessWord() {
+    void guessWord() throws GameRuleException {
         Game game = new Game();
-        try {
-            game.newRound("SEVEN");
 
-            when(service.guessWord(anyString(), anyString())).thenReturn(game);
-        } catch (Exception e) {
-            fail("Exception thrown while preparing test.");
-        }
+        game.newRound("SEVEN");
 
-        assertNotNull(controller.guessWord("anUuidYouSeeHere","GUESS"));
-        try {
-            verify(service, times(1)).guessWord(anyString(), anyString());
-        } catch (Exception e) {
-            fail("Exception thrown while verifying the correct methods were called.");
-        }
+        when(service.guessWord(anyString(), anyString())).thenReturn(game);
+
+        GuessDTO guestDTO = new GuessDTO("GUESS");
+
+        assertNotNull(controller.guessWord("anUuidYouSeeHere",guestDTO));
+
+        verify(service, times(1)).guessWord(anyString(), anyString());
     }
 }

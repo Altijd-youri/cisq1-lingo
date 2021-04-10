@@ -1,6 +1,7 @@
 package nl.hu.cisq1.lingo.trainer.domain;
 
 import nl.hu.cisq1.lingo.trainer.domain.enums.Status;
+import nl.hu.cisq1.lingo.trainer.domain.exceptions.GameRuleException;
 import nl.hu.cisq1.lingo.trainer.domain.exceptions.InvalidGuessException;
 import nl.hu.cisq1.lingo.trainer.domain.exceptions.NoActiveRoundException;
 import org.junit.jupiter.api.DisplayName;
@@ -20,21 +21,17 @@ class RoundTest {
 
     @DisplayName("The score is zero while the round is active.")
     @Test
-    void ScoreIsZeroWhileRoundIsActive() {
+    void ScoreIsZeroWhileRoundIsActive() throws GameRuleException {
         Round round = new Round("BAARD");
         assertEquals(0, round.getScore());
 
-        try {
-            round.guessWord("GUESS");
-        } catch (InvalidGuessException | NoActiveRoundException e) {
-            fail("Exception thrown while arranging test.");
-        }
+        round.guessWord("GUESS");
         assertEquals(0, round.getScore());
     }
 
     @DisplayName("Score is as expected when the word is not guessed before the round ends.")
     @Test
-    void scoreIsCorrectAfterFiveGuesses() {
+    void scoreIsCorrectAfterFiveGuesses() throws GameRuleException {
         Round round = prepareRoundWithSpecifiedWrongAttempts(5, "BAARD");
 
         assertEquals(5, round.getScore());
@@ -42,35 +39,29 @@ class RoundTest {
 
     @DisplayName("Round is won when the word is guessed after four attempts.")
     @Test
-    void RoundWonWhenGuessedAfterFourAttempts() {
+    void RoundWonWhenGuessedAfterFourAttempts() throws GameRuleException {
         Round round = prepareRoundWithSpecifiedWrongAttempts(4, "BAARD");
-        try {
-            round.guessWord("BAARD");
-        } catch (InvalidGuessException | NoActiveRoundException e) {
-            fail("Exception thrown while arranging test.");
-        }
+
+        round.guessWord("BAARD");
 
         assertEquals(Status.WON, round.getStatus());
     }
 
     @DisplayName("Round is lost after the maximum of five attemts is reached before the word is guessed.")
     @Test
-    void RoundLostAfterMaxAttempts() {
+    void RoundLostAfterMaxAttempts() throws GameRuleException {
         Round round = prepareRoundWithSpecifiedWrongAttempts(5, "BAARD");
 
         assertEquals(Status.LOST, round.getStatus());
     }
 
     @DisplayName("Prepare a round with the specified amount of wrong attempts.")
-    private Round prepareRoundWithSpecifiedWrongAttempts(int allowedAttempts, String correctWord) {
+    private Round prepareRoundWithSpecifiedWrongAttempts(int allowedAttempts, String correctWord) throws GameRuleException {
         Round round = new Round(correctWord);
-        try {
-            for (int index = 0; index < allowedAttempts; index++) {
-                round.guessWord("NOTIT");
-            }
-        } catch (InvalidGuessException | NoActiveRoundException e) {
-            fail("Excpection thrown while arranging test.");
+        for (int index = 0; index < allowedAttempts; index++) {
+            round.guessWord("NOTIT");
         }
+
         return round;
     }
 }

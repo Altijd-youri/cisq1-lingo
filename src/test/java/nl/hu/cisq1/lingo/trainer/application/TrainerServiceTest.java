@@ -2,16 +2,12 @@ package nl.hu.cisq1.lingo.trainer.application;
 
 import nl.hu.cisq1.lingo.trainer.data.SpringGameRepository;
 import nl.hu.cisq1.lingo.trainer.domain.Game;
-import nl.hu.cisq1.lingo.trainer.domain.exceptions.InvalidGuessException;
-import nl.hu.cisq1.lingo.trainer.domain.exceptions.NoActiveGameException;
-import nl.hu.cisq1.lingo.trainer.domain.exceptions.NoActiveRoundException;
-import nl.hu.cisq1.lingo.trainer.domain.exceptions.PreviousRoundNotFinishedException;
+import nl.hu.cisq1.lingo.trainer.domain.exceptions.*;
 import nl.hu.cisq1.lingo.words.application.WordService;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 
-import javax.management.InstanceNotFoundException;
 import java.util.Optional;
 
 import static org.junit.jupiter.api.Assertions.*;
@@ -42,54 +38,41 @@ class TrainerServiceTest {
 
     @Test
     @DisplayName("Can start a new round on a game.")
-    void startNewRound() {
+    void startNewRound() throws GameRuleException {
         Game game = new Game();
 
         when(gameRepository.findById(any())).thenReturn(Optional.of(game));
 
-        try {
-            service.startNewRound(game.getId());
-        } catch (InstanceNotFoundException | NoActiveRoundException | PreviousRoundNotFinishedException e) {
-           fail();
-        } catch (Exception e) {
-            fail("Failed with a non-game exception.");
-        }
+        service.startNewRound(game.getId());
 
         verify(wordService, times(1)).provideRandomWord(anyInt());
     }
 
     @Test
     @DisplayName("Can place a guess on a active round.")
-    void guessWord() {
+    void guessWord() throws GameRuleException{
         Game game = new Game();
-        try {
-            game.newRound("HALLO");
-        } catch (PreviousRoundNotFinishedException | NoActiveGameException e) {
-            fail("Exception thrown while preparing test.");
-        }
+
+        game.newRound("HALLO");
 
         when(gameRepository.findById(any())).thenReturn(Optional.of(game));
 
         try {
             service.guessWord(game.getId(), "WRONG");
-        } catch (InstanceNotFoundException | NoActiveRoundException | InvalidGuessException | NoActiveGameException e) {
+        } catch (NoActiveRoundException | InvalidGuessException | GameNotFoundException e) {
             fail();
         }
     }
 
     @Test
     @DisplayName("Get game status.")
-    void getGameStatus() {
+    void getGameStatus() throws GameRuleException {
         Game game = new Game();
         String uuid = game.getId();
 
         when(gameRepository.findById(any())).thenReturn(Optional.of(game));
 
-        try {
-            assertEquals(game, service.getStatus(uuid));
-        } catch (InstanceNotFoundException e) {
-            fail("Exception thrown in getStatus(String uuid).");
-        }
+        assertEquals(game, service.getStatus(uuid));
     }
 
     @Test
@@ -99,6 +82,6 @@ class TrainerServiceTest {
 
         when(gameRepository.findById(any())).thenReturn(Optional.empty());
 
-        assertThrows(InstanceNotFoundException.class, () -> service.getStatus(uuid));
+        assertThrows(GameNotFoundException.class, () -> service.getStatus(uuid));
     }
 }

@@ -5,8 +5,10 @@ import nl.hu.cisq1.lingo.trainer.domain.exceptions.InvalidGuessException;
 import nl.hu.cisq1.lingo.trainer.domain.exceptions.NoActiveGameException;
 import nl.hu.cisq1.lingo.trainer.domain.exceptions.NoActiveRoundException;
 import nl.hu.cisq1.lingo.trainer.domain.exceptions.PreviousRoundNotFinishedException;
+import org.hibernate.FetchMode;
 import org.hibernate.annotations.Cascade;
 import org.hibernate.annotations.CascadeType;
+import org.hibernate.annotations.Fetch;
 
 import javax.persistence.*;
 import java.util.*;
@@ -15,7 +17,7 @@ import java.util.*;
 public class Game {
     @Id
     private UUID id = UUID.randomUUID();
-    @OneToMany
+    @OneToMany( fetch = FetchType.EAGER)
     @Cascade(CascadeType.ALL)
     private List<Round> rounds = new ArrayList<>();
     @Column

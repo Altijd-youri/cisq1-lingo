@@ -20,7 +20,7 @@ public class Round {
     private String word;
     @Column
     private Status status;
-    @OneToMany
+    @OneToMany(fetch = FetchType.EAGER)
     @Cascade(CascadeType.ALL)
     private List<Guess> guesses;
 

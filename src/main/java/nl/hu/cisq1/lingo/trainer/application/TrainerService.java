@@ -2,14 +2,10 @@ package nl.hu.cisq1.lingo.trainer.application;
 
 import nl.hu.cisq1.lingo.trainer.data.SpringGameRepository;
 import nl.hu.cisq1.lingo.trainer.domain.Game;
-import nl.hu.cisq1.lingo.trainer.domain.exceptions.InvalidGuessException;
-import nl.hu.cisq1.lingo.trainer.domain.exceptions.NoActiveGameException;
-import nl.hu.cisq1.lingo.trainer.domain.exceptions.NoActiveRoundException;
-import nl.hu.cisq1.lingo.trainer.domain.exceptions.PreviousRoundNotFinishedException;
+import nl.hu.cisq1.lingo.trainer.domain.exceptions.*;
 import nl.hu.cisq1.lingo.words.application.WordService;
 import org.springframework.stereotype.Service;
 
-import javax.management.InstanceNotFoundException;
 import javax.transaction.Transactional;
 import java.util.Optional;
 import java.util.UUID;
@@ -27,7 +23,7 @@ public class TrainerService {
         this.gameRepository = gameRepository;
     }
 
-    public Game getStatus(String uuid) throws InstanceNotFoundException {
+    public Game getStatus(String uuid) throws GameNotFoundException {
         return getGame(uuid);
     }
 
@@ -38,7 +34,7 @@ public class TrainerService {
         return game;
     }
 
-    public Game startNewRound(String uuid) throws InstanceNotFoundException, NoActiveRoundException, PreviousRoundNotFinishedException, NoActiveGameException {
+    public Game startNewRound(String uuid) throws GameNotFoundException, PreviousRoundNotFinishedException, NoActiveGameException {
         Game game = getGame(uuid);
 
         int length = 5; //TODO - Implement length grow and shrink cycle.
@@ -50,7 +46,7 @@ public class TrainerService {
         return game;
     }
 
-    public Game guessWord(String uuid, String guess) throws InstanceNotFoundException, NoActiveRoundException, InvalidGuessException, NoActiveGameException {
+    public Game guessWord(String uuid, String guess) throws GameNotFoundException, NoActiveRoundException, InvalidGuessException {
         Game game = getGame(uuid);
 
         game.guessWord(guess);
@@ -59,10 +55,13 @@ public class TrainerService {
         return game;
     }
 
-    private Game getGame(String uuid) throws InstanceNotFoundException {
-        Optional<Game> optionalGame = gameRepository.findById(UUID.fromString(uuid));
-        if (optionalGame.isEmpty()) throw new InstanceNotFoundException("Game with given Id doesn't exists.");
-
-        return optionalGame.get();
+    private Game getGame(String uuid) throws GameNotFoundException {
+        try {
+            Optional<Game> optionalGame = gameRepository.findById(UUID.fromString(uuid));
+            if (optionalGame.isEmpty()) throw new GameNotFoundException();
+            return optionalGame.get();
+        } catch (IllegalArgumentException e) {
+            throw new GameNotFoundException();
+        }
     }
 }
