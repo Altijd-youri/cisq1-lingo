@@ -59,7 +59,7 @@ class TrainerServiceTest {
 
         try {
             service.guessWord(game.getId(), "WRONG");
-        } catch (NoActiveRoundException | InvalidGuessException | NoActiveGameException | GameNotFoundException e) {
+        } catch (NoActiveRoundException | InvalidGuessException | GameNotFoundException e) {
             fail();
         }
     }

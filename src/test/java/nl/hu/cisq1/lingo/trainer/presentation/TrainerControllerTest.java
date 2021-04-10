@@ -3,6 +3,7 @@ package nl.hu.cisq1.lingo.trainer.presentation;
 import nl.hu.cisq1.lingo.trainer.application.TrainerService;
 import nl.hu.cisq1.lingo.trainer.domain.Game;
 import nl.hu.cisq1.lingo.trainer.domain.exceptions.*;
+import nl.hu.cisq1.lingo.trainer.presentation.dto.GuessDTO;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
@@ -68,7 +69,9 @@ class TrainerControllerTest {
 
         when(service.guessWord(anyString(), anyString())).thenReturn(game);
 
-        assertNotNull(controller.guessWord("anUuidYouSeeHere","GUESS"));
+        GuessDTO guestDTO = new GuessDTO("GUESS");
+
+        assertNotNull(controller.guessWord("anUuidYouSeeHere",guestDTO));
 
         verify(service, times(1)).guessWord(anyString(), anyString());
     }

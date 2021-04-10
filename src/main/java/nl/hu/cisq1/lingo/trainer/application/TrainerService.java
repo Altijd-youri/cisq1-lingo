@@ -34,7 +34,7 @@ public class TrainerService {
         return game;
     }
 
-    public Game startNewRound(String uuid) throws GameNotFoundException, NoActiveRoundException, PreviousRoundNotFinishedException, NoActiveGameException {
+    public Game startNewRound(String uuid) throws GameNotFoundException, PreviousRoundNotFinishedException, NoActiveGameException {
         Game game = getGame(uuid);
 
         int length = 5; //TODO - Implement length grow and shrink cycle.
@@ -46,7 +46,7 @@ public class TrainerService {
         return game;
     }
 
-    public Game guessWord(String uuid, String guess) throws GameNotFoundException, NoActiveRoundException, InvalidGuessException, NoActiveGameException {
+    public Game guessWord(String uuid, String guess) throws GameNotFoundException, NoActiveRoundException, InvalidGuessException {
         Game game = getGame(uuid);
 
         game.guessWord(guess);
@@ -56,9 +56,12 @@ public class TrainerService {
     }
 
     private Game getGame(String uuid) throws GameNotFoundException {
-        Optional<Game> optionalGame = gameRepository.findById(UUID.fromString(uuid));
-        if (optionalGame.isEmpty()) throw new GameNotFoundException();
-
-        return optionalGame.get();
+        try {
+            Optional<Game> optionalGame = gameRepository.findById(UUID.fromString(uuid));
+            if (optionalGame.isEmpty()) throw new GameNotFoundException();
+            return optionalGame.get();
+        } catch (IllegalArgumentException e) {
+            throw new GameNotFoundException();
+        }
     }
 }
