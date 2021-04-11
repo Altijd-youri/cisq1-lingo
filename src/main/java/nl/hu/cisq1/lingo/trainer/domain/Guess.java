@@ -52,8 +52,8 @@ public class Guess {
         hint.append(round.getWord().charAt(0));
         hint.append(".".repeat(round.wordLength()-1));
 
-        for (Feedback feedback : feedbackHistory) {
-            List<Mark> marks = feedback.getMarks();
+        for (Feedback feedbackFromHistory : feedbackHistory) {
+            List<Mark> marks = feedbackFromHistory.getMarks();
             for (int position = 0; position < marks.size(); position++) {
                 if (hint.charAt(position) != '.') continue;
                 Mark mark = marks.get(position);

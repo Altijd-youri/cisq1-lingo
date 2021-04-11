@@ -9,8 +9,6 @@ public class GuessDTO {
 
     public GuessDTO() {}
 
-    public void setWord() { this.word = word; }
-
     public String getWord() {
         return word;
     }

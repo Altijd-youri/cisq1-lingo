@@ -18,7 +18,7 @@ import static org.junit.jupiter.api.Assertions.*;
 
 @SpringBootTest
 @Import(CiTestConfiguration.class)
-public class TrainerServiceIntegrationTest {
+class TrainerServiceIntegrationTest {
 
     @Autowired
     private WordService wordService;
