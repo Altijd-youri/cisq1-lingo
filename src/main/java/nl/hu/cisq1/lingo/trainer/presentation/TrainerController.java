@@ -34,10 +34,9 @@ public class TrainerController {
             List<Guess> guesses = round.getGuesses();
             List<GuessResponseDTO> guessDTOs = new ArrayList<>();
 
-            for (int index = 0; index < guesses.size(); index++) {
-                Guess guess = guesses.get(index);
+            for (Guess guess : guesses) {
                 List<Mark> marks = guess.getFeedback().getMarks();
-                List<String> stringifyMarks = marks.stream().map(mark -> mark.toString()).collect(Collectors.toList());
+                List<String> stringifyMarks = marks.stream().map(Mark::toString).collect(Collectors.toList());
                 guessDTOs.add(new GuessResponseDTO(guess.getGuessed(), stringifyMarks));
             }
 

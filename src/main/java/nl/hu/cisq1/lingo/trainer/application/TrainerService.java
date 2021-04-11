@@ -67,13 +67,16 @@ public class TrainerService {
 
     private int determineWordLength(int roundsBefore) {
         int num = roundsBefore + 1;
-        int wordLength = 5;
+        int wordLength;
         switch(calculateModules(num)) {
             case 0:
                 wordLength = 7;
-            case 1: break; // 5;
+                break;
             case 2:
                 wordLength =  6;
+                break;
+            default:
+                wordLength = 5;
         }
         return wordLength;
     }
