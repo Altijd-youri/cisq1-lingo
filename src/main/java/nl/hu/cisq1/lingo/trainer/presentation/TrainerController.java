@@ -2,19 +2,50 @@ package nl.hu.cisq1.lingo.trainer.presentation;
 
 import nl.hu.cisq1.lingo.trainer.application.TrainerService;
 import nl.hu.cisq1.lingo.trainer.domain.Game;
+import nl.hu.cisq1.lingo.trainer.domain.Guess;
+import nl.hu.cisq1.lingo.trainer.domain.Round;
+import nl.hu.cisq1.lingo.trainer.domain.enums.Mark;
 import nl.hu.cisq1.lingo.trainer.domain.exceptions.*;
 import nl.hu.cisq1.lingo.trainer.presentation.dto.GameResponseDTO;
 import nl.hu.cisq1.lingo.trainer.presentation.dto.GuessDTO;
+import nl.hu.cisq1.lingo.trainer.presentation.dto.GuessResponseDTO;
+import nl.hu.cisq1.lingo.trainer.presentation.dto.RoundResponseDTO;
 import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.server.ResponseStatusException;
 
-import javax.management.InstanceNotFoundException;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Optional;
+import java.util.stream.Collectors;
 
 @RestController
 @RequestMapping("game")
 public class TrainerController {
+
     private final TrainerService trainerService;
+
+    private static GameResponseDTO createResponseDTO(Game game) {
+        Optional<Round> optionalRound = game.getRound();
+        if(optionalRound.isPresent()) {
+            Round round = optionalRound.get();
+
+
+            List<Guess> guesses = round.getGuesses();
+            List<GuessResponseDTO> guessDTOs = new ArrayList<>();
+
+            for (int index = 0; index < guesses.size(); index++) {
+                Guess guess = guesses.get(index);
+                List<Mark> marks = guess.getFeedback().getMarks();
+                List<String> stringifyMarks = marks.stream().map(mark -> mark.toString()).collect(Collectors.toList());
+                guessDTOs.add(new GuessResponseDTO(guess.getGuessed(), stringifyMarks));
+            }
+
+            RoundResponseDTO roundDTO = new RoundResponseDTO(round.getId(), round.getStatus().toString(), round.getHint(), guessDTOs);
+            return new GameResponseDTO(game.getId(), game.getNumberOfRounds(), game.getScore(), game.getStatus().toString(), roundDTO);
+        }
+        return new GameResponseDTO(game.getId(), game.getNumberOfRounds(), game.getScore(), game.getStatus().toString());
+    }
 
     public TrainerController(TrainerService trainerService) {
         this.trainerService = trainerService;
@@ -26,7 +57,7 @@ public class TrainerController {
 
         Game game = trainerService.startNewGame();
 
-        return new GameResponseDTO(game.getId(), game.getNumberOfRounds(), game.getScore(), game.getStatus().toString());
+        return TrainerController.createResponseDTO(game);
     }
 
     @GetMapping(value = "/{uuid}")
@@ -34,7 +65,7 @@ public class TrainerController {
         try {
             Game game = trainerService.getStatus(uuid);
 
-            return new GameResponseDTO(game.getId(), game.getNumberOfRounds(), game.getScore(), game.getStatus().toString());
+            return TrainerController.createResponseDTO(game);
         } catch (GameNotFoundException e) {
             throw new ResponseStatusException(HttpStatus.NOT_FOUND);
         }
@@ -47,7 +78,7 @@ public class TrainerController {
         try {
             Game game = trainerService.startNewRound(uuid);
 
-            return new GameResponseDTO(game.getId(), game.getNumberOfRounds(), game.getScore(), game.getStatus().toString());
+            return TrainerController.createResponseDTO(game);
         } catch (GameNotFoundException e) {
             throw new ResponseStatusException(HttpStatus.NOT_FOUND);
         } catch (PreviousRoundNotFinishedException e) {
@@ -62,7 +93,7 @@ public class TrainerController {
         try {
             Game game = trainerService.guessWord(uuid, guessDTO.getWord());
 
-            return new GameResponseDTO(game.getId(), game.getNumberOfRounds(), game.getScore(), game.getStatus().toString());
+            return TrainerController.createResponseDTO(game);
         } catch (GameNotFoundException e) {
             throw new ResponseStatusException(HttpStatus.NOT_FOUND);
         } catch (NoActiveRoundException e) {

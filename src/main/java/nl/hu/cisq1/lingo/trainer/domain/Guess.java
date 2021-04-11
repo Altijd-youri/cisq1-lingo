@@ -21,15 +21,18 @@ public class Guess {
     private Round round;
     @Column
     private String correctWord;
+    @Column
+    private String guessed;
 
-    public Guess(Round round, String guessedWord) {
+    public Guess() {}
+
+    public Guess(Round round, String guessed) {
         this.round = round;
         this.correctWord = this.round.getWord();
 
-        this.feedback = this.generateFeedback(guessedWord);
+        this.guessed = guessed;
+        this.feedback = this.generateFeedback(guessed);
     }
-
-    public Guess() {}
 
     private List<Feedback> getPreviousFeedback() {
         List<Guess> guessHistory = this.round.getGuesses();
@@ -45,9 +48,12 @@ public class Guess {
     }
 
     private String createHint(List<Feedback> feedbackHistory) {
-        StringBuilder hint = new StringBuilder(".".repeat(round.wordLength()));
-        for (Feedback feedback : feedbackHistory) {
-            List<Mark> marks = feedback.getMarks();
+        StringBuilder hint = new StringBuilder(round.wordLength());
+        hint.append(round.getWord().charAt(0));
+        hint.append(".".repeat(round.wordLength()-1));
+
+        for (Feedback feedbackFromHistory : feedbackHistory) {
+            List<Mark> marks = feedbackFromHistory.getMarks();
             for (int position = 0; position < marks.size(); position++) {
                 if (hint.charAt(position) != '.') continue;
                 Mark mark = marks.get(position);
@@ -60,9 +66,13 @@ public class Guess {
         return hint.toString();
     }
 
+    public String getGuessed() {
+        return guessed;
+    }
+
     public String takeAGuess() throws InvalidGuessException {
         if(!feedback.isWordValid()) throw new InvalidGuessException();
-        List<Feedback> feedbackHistory = this.getPreviousFeedback();
+        List<Feedback> feedbackHistory = getPreviousFeedback();
         return createHint(feedbackHistory);
     }
 

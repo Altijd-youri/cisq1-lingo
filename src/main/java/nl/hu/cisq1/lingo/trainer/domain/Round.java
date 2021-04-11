@@ -14,8 +14,7 @@ import java.util.UUID;
 @Entity
 public class Round {
     @Id
-    @GeneratedValue
-    private UUID id;
+    private UUID id = UUID.randomUUID();
     @Column
     private String word;
     @Column
@@ -23,11 +22,22 @@ public class Round {
     @OneToMany(fetch = FetchType.EAGER)
     @Cascade(CascadeType.ALL)
     private List<Guess> guesses;
+    @Column
+    private String hint;
 
     public Round(String word) {
         this.status = Status.ACTIVE;
         this.word = word;
         this.guesses = new ArrayList<>();
+        this.hint = createFirstHint();
+    }
+
+    private String createFirstHint() {
+        StringBuilder builder = new StringBuilder();
+        builder.append(word.charAt(0));
+        builder.append(".".repeat(wordLength()-1));
+
+        return builder.toString();
     }
 
     public Round() {}
@@ -66,7 +76,7 @@ public class Round {
         Guess newGuess = new Guess(this, guessedWord);
         this.guesses.add(newGuess);
 
-        String hint = newGuess.takeAGuess();
+        hint = newGuess.takeAGuess();
 
         if(newGuess.isWordGuessed()) {
             this.markAsEnded(Status.WON);
@@ -75,7 +85,6 @@ public class Round {
         if(this.getGuesses().size() >= 5) {
             this.markAsEnded(Status.LOST);
         }
-
         return hint;
     }
 
@@ -85,6 +94,14 @@ public class Round {
 
     public boolean isActive() {
         return getStatus().equals(Status.ACTIVE);
+    }
+
+    public String getId() {
+        return id.toString();
+    }
+
+    public String getHint() {
+        return hint;
     }
 
     private void markAsEnded(Status status) {

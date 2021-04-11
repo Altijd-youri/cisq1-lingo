@@ -5,10 +5,8 @@ import nl.hu.cisq1.lingo.trainer.domain.exceptions.InvalidGuessException;
 import nl.hu.cisq1.lingo.trainer.domain.exceptions.NoActiveGameException;
 import nl.hu.cisq1.lingo.trainer.domain.exceptions.NoActiveRoundException;
 import nl.hu.cisq1.lingo.trainer.domain.exceptions.PreviousRoundNotFinishedException;
-import org.hibernate.FetchMode;
 import org.hibernate.annotations.Cascade;
 import org.hibernate.annotations.CascadeType;
-import org.hibernate.annotations.Fetch;
 
 import javax.persistence.*;
 import java.util.*;
@@ -91,6 +89,10 @@ public class Game {
         }
 
         return hint;
+    }
+
+    public Optional<Round> getRound() {
+        return getLastRound();
     }
 
     private Optional<Round> getLastRound() {

@@ -42,6 +42,7 @@ class TrainerServiceTest {
         Game game = new Game();
 
         when(gameRepository.findById(any())).thenReturn(Optional.of(game));
+        when(wordService.provideRandomWord(anyInt())).thenReturn("zeven");
 
         service.startNewRound(game.getId());
 
