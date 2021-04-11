@@ -7,7 +7,7 @@ on:
       - 'development/**'
       - '**.md'
     branches:
-      - main
+      - dependabot-action-fix
   pull_request:
     types: [ opened, synchronize, reopened ]
   workflow_dispatch:
@@ -45,6 +45,7 @@ jobs:
         run: mvn --batch-mode --update-snapshots verify -Dspring.profiles.active=ci
 
       - name: Build and analyze
+        if: ${{ !github.actor=="dependabot"}}
         env:
             GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
             SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
