@@ -4,6 +4,7 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import nl.hu.cisq1.lingo.CiTestConfiguration;
 import nl.hu.cisq1.lingo.trainer.presentation.dto.GameResponseDTO;
 import nl.hu.cisq1.lingo.trainer.presentation.dto.GuessDTO;
+import org.apache.tomcat.util.file.Matcher;
 import org.junit.jupiter.api.*;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
@@ -65,9 +66,10 @@ class TrainerControllerIntegrationTest {
                 .andExpect(jsonPath("$.id", is(uuid)))
                 .andExpect(jsonPath("$.status", is("ACTIVE")))
                 .andExpect(jsonPath("$.score", is(0)))
-                .andExpect(jsonPath("$.rounds", is(1)));
-
-        // TODO - Make assertion more thorough. e.g.: hint
+                .andExpect(jsonPath("$.rounds", is(1)))
+                .andExpect(jsonPath("$.round.id", is(notNullValue())))
+                .andExpect(jsonPath("$.round.status", is("ACTIVE")))
+                .andExpect(jsonPath("$.round.hint", matchesRegex("[a-z]\\.{4}")));
     }
 
     @Test
@@ -123,11 +125,12 @@ class TrainerControllerIntegrationTest {
                 .content(objectMapper.writeValueAsString(guessDTO))
                 .contentType(MediaType.APPLICATION_JSON);
         mockMvc.perform(requestGuess)
-                .andExpect(status().isOk());
-
-        // TODO - Make assertion more thorough. e.g.: hint and feedback:
-//                .andExpect(jsonPath("$.round.hint", is(hasLength(5))))
-//                .andExpect(jsonPath("$.round.feedback", is(hasLength(5))));
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$.round.id", is(notNullValue())))
+                .andExpect(jsonPath("$.round.status", is("ACTIVE")))
+                .andExpect(jsonPath("$.round.hint", matchesRegex("[a-z \\.]{5}")))
+                .andExpect(jsonPath("$.round.guesses[0].guess", is("beard")))
+                .andExpect(jsonPath("$.round.guesses[0].marks", hasSize(5)));
     }
 
     @Test
