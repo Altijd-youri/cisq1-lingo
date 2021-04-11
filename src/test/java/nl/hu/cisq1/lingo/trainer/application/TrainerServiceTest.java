@@ -20,7 +20,7 @@ class TrainerServiceTest {
     SpringGameRepository gameRepository;
 
     @BeforeEach
-    void mockDependancies() {
+    void mockDependencies() {
         wordService = mock(WordService.class);
         gameRepository = mock(SpringGameRepository.class);
 
@@ -47,6 +47,37 @@ class TrainerServiceTest {
         service.startNewRound(game.getId());
 
         verify(wordService, times(1)).provideRandomWord(anyInt());
+    }
+
+    @Test
+    @DisplayName("Word length of rounds is correct.")
+    void wordLengthTest() throws GameRuleException {
+        Game game = new Game();
+
+        when(gameRepository.findById(any())).thenReturn(Optional.of(game));
+        when(wordService.provideRandomWord(5)).thenReturn("seven");
+        when(wordService.provideRandomWord(6)).thenReturn("letter");
+        when(wordService.provideRandomWord(7)).thenReturn("letters");
+
+        service.startNewRound(game.getId());
+        game.guessWord(game.getRound().orElseThrow(PreviousRoundNotFinishedException::new).getWord());
+
+        verify(wordService, times(1)).provideRandomWord(5);
+
+        service.startNewRound(game.getId());
+        game.guessWord(game.getRound().orElseThrow(PreviousRoundNotFinishedException::new).getWord());
+
+        verify(wordService, times(1)).provideRandomWord(6);
+
+        service.startNewRound(game.getId());
+        game.guessWord(game.getRound().orElseThrow(PreviousRoundNotFinishedException::new).getWord());
+
+        verify(wordService, times(1)).provideRandomWord(7);
+
+        service.startNewRound(game.getId());
+        game.guessWord(game.getRound().orElseThrow(PreviousRoundNotFinishedException::new).getWord());
+
+        verify(wordService, times(2)).provideRandomWord(5);
     }
 
     @Test
