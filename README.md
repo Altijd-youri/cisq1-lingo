@@ -12,3 +12,6 @@
 
 > ![Domainmodel Lingo Application](docs/domainmodel.png)  
 > Made with Visual Paradigm, project files can be found in the [visualParadigm folder](docs/visualParadigm/) in the docs folder.
+  
+## Security Risk analyse
+For this project a security risk analyses has been carried out. The analysis can be found in its own document: [OWASP-2017](OWASP-2017.md).
