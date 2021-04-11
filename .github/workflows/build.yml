@@ -45,7 +45,7 @@ jobs:
         run: mvn --batch-mode --update-snapshots verify -Dspring.profiles.active=ci
 
       - name: Build and analyze
-        if: ${{ github.actor!='dependabot'}}
+        if: ${{ github.actor!='altijd-youri'}}
         env:
             GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
             SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
