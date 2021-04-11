@@ -16,6 +16,7 @@ import org.springframework.web.server.ResponseStatusException;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Optional;
 import java.util.stream.Collectors;
 
 @RestController
@@ -25,13 +26,15 @@ public class TrainerController {
     private final TrainerService trainerService;
 
     private static GameResponseDTO createResponseDTO(Game game) {
-        if (game.getNumberOfRounds() > 0) {
-            Round round = game.getRound().get();
+        Optional<Round> optionalRound = game.getRound();
+        if(optionalRound.isPresent()) {
+            Round round = optionalRound.get();
+
 
             List<Guess> guesses = round.getGuesses();
             List<GuessResponseDTO> guessDTOs = new ArrayList<>();
 
-            for (int index=0; index < guesses.size(); index++) {
+            for (int index = 0; index < guesses.size(); index++) {
                 Guess guess = guesses.get(index);
                 List<Mark> marks = guess.getFeedback().getMarks();
                 List<String> stringifyMarks = marks.stream().map(mark -> mark.toString()).collect(Collectors.toList());
