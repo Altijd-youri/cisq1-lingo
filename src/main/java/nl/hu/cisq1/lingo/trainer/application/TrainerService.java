@@ -37,7 +37,7 @@ public class TrainerService {
     public Game startNewRound(String uuid) throws GameNotFoundException, PreviousRoundNotFinishedException, NoActiveGameException {
         Game game = getGame(uuid);
 
-        int length = 5; //TODO - Implement length grow and shrink cycle.
+        int length = determineWordLength(game.getNumberOfRounds());
         String word = wordService.provideRandomWord(length);
 
         game.newRound(word);
@@ -63,5 +63,26 @@ public class TrainerService {
         } catch (IllegalArgumentException e) {
             throw new GameNotFoundException();
         }
+    }
+
+    private int determineWordLength(int roundsBefore) {
+        int num = roundsBefore + 1;
+        int wordLength = 5;
+        switch(calculateModules(num)) {
+            case 0:
+                wordLength = 7;
+            case 1: break; // 5;
+            case 2:
+                wordLength =  6;
+        }
+        return wordLength;
+    }
+
+    private int calculateModules(int number) {
+        final int modules = 3;
+        while(number >= modules) {
+            number = number - modules;
+        }
+        return number;
     }
 }
