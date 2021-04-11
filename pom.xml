@@ -95,6 +95,7 @@
                 <configuration>
                     <mutationThreshold>90</mutationThreshold>
                     <timestampedReports>false</timestampedReports>
+                    <excludedClasses>nl.hu.cisq1.lingo.trainer.presentation.dto*</excludedClasses>
                 </configuration>
             </plugin>
 
